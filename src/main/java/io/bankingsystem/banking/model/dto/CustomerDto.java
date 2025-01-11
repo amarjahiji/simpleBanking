@@ -1,4 +1,22 @@
 package io.bankingsystem.banking.model.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class CustomerDto {
+    private UUID id;
+    private String customerFirstName;
+    private String customerLastName;
+    private String customerEmail;
+    private String customerPhoneNumber;
+    private String customerAddress;
 }
