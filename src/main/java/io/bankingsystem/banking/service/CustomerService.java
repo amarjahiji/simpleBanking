@@ -6,28 +6,53 @@ import io.bankingsystem.banking.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
 private final CustomerRepository customerRepository;
+private final MappingService mappingService;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, MappingService mappingService) {
         this.customerRepository = customerRepository;
+        this.mappingService = mappingService;
     }
     
     public List<CustomerDto> getAllCustomers() {
-        return customerRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return customerRepository.findAll().stream().map(mappingService::mapToCustomerDto).collect(Collectors.toList());
     }
 
-    public CustomerDto mapToDto(CustomerEntity customer) {
-        return new CustomerDto(
-                customer.getId(),
-                customer.getCustomerFirstName(),
-                customer.getCustomerLastName(),
-                customer.getCustomerEmail(),
-                customer.getCustomerPhoneNumber(),
-                customer.getCustomerAddress()
-        );
+    public CustomerDto getCustomerById(UUID id) throws Exception {
+        CustomerEntity customer = customerRepository.findById(id)
+                .orElseThrow(() -> new Exception("Customer not found"));
+        return mappingService.mapToCustomerDto(customer);
+    }
+
+    public CustomerDto createCustomer(CustomerDto customerDto) {
+        CustomerEntity customer = mappingService.mapToCustomerEntity(customerDto);
+        CustomerEntity savedCustomer = customerRepository.save(customer);
+        return mappingService.mapToCustomerDto(savedCustomer);
+    }
+
+    public CustomerDto updateCustomer(UUID id, CustomerDto customerDto) throws Exception {
+        CustomerEntity customer = customerRepository.findById(id)
+                .orElseThrow(() -> new Exception("Customer not found"));
+
+        customer.setCustomerFirstName(customerDto.getCustomerFirstName());
+        customer.setCustomerLastName(customerDto.getCustomerLastName());
+        customer.setCustomerEmail(customerDto.getCustomerEmail());
+        customer.setCustomerPhoneNumber(customerDto.getCustomerPhoneNumber());
+        customer.setCustomerAddress(customerDto.getCustomerAddress());
+
+        CustomerEntity updatedCustomer = customerRepository.save(customer);
+        return mappingService.mapToCustomerDto(updatedCustomer);
+    }
+
+    public void deleteCustomer(UUID id) throws Exception {
+        if(!customerRepository.existsById(id)) {
+            throw new Exception("Customer not found");
+        }
+        customerRepository.deleteById(id);
     }
 }

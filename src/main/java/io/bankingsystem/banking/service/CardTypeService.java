@@ -11,19 +11,43 @@ import java.util.stream.Collectors;
 @Service
 public class CardTypeService {
     private final CardTypeRepository cardTypeRepository;
+    private final MappingService mappingService;
 
-    public CardTypeService(CardTypeRepository cardTypeRepository) {
+    public CardTypeService(CardTypeRepository cardTypeRepository, MappingService mappingService) {
         this.cardTypeRepository = cardTypeRepository;
+        this.mappingService = mappingService;
     }
 
     public List<CardTypeDto> getAllCardTypes() {
-        return cardTypeRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return cardTypeRepository.findAll().stream().map(mappingService::mapToCardTypeDto).collect(Collectors.toList());
     }
 
-    public CardTypeDto mapToDto(CardTypeEntity cardType){
-        return new CardTypeDto(
-                cardType.getId(),
-                cardType.getCardTypeName()
-        );
+    public CardTypeDto getCardTypeById(Integer id) throws Exception {
+        CardTypeEntity cardType = cardTypeRepository.findById(id)
+                .orElseThrow(() -> new Exception("Card type not found"));
+        return mappingService.mapToCardTypeDto(cardType);
+    }
+
+    public CardTypeDto createCardType(CardTypeDto cardTypeDto) {
+        CardTypeEntity cardType = mappingService.mapToCardTypeEntity(cardTypeDto);
+        CardTypeEntity savedCardType = cardTypeRepository.save(cardType);
+        return mappingService.mapToCardTypeDto(savedCardType);
+    }
+
+    public CardTypeDto updateCardType(Integer id, CardTypeDto cardTypeDto) throws Exception {
+        CardTypeEntity cardType = cardTypeRepository.findById(id)
+                .orElseThrow(() -> new Exception("Card type not found"));
+
+        cardType.setCardTypeName(cardTypeDto.getCardTypeName());
+
+        CardTypeEntity updatedCardType = cardTypeRepository.save(cardType);
+        return mappingService.mapToCardTypeDto(updatedCardType);
+    }
+
+    public void deleteCardType(Integer id) throws Exception {
+        if(!cardTypeRepository.existsById(id)) {
+            throw new Exception("Card type not found");
+        }
+        cardTypeRepository.deleteById(id);
     }
 }
