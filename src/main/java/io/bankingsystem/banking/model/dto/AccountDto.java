@@ -1,5 +1,7 @@
 package io.bankingsystem.banking.model.dto;
 
+import io.bankingsystem.banking.model.enums.AccountStatus;
+import io.bankingsystem.banking.model.enums.AccountType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,10 +19,10 @@ import java.util.UUID;
 public class AccountDto {
     private UUID id;
     private String accountNumber;
-    private String accountType;
+    private AccountType accountType;
     private BigDecimal accountCurrentBalance;
     private LocalDateTime accountDateOpened;
     private LocalDateTime accountDateClosed;
-    private String accountStatus;
+    private AccountStatus accountStatus;
     private UUID customerId;
 }

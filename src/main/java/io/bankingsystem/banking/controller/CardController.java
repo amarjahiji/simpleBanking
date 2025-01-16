@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +38,14 @@ public class CardController {
     @PutMapping("/{id}")
     public ResponseEntity<CardDto> updateCard(@PathVariable UUID id, @RequestBody CardDto cardDto) throws Exception {
         return ResponseEntity.ok(cardService.updateCard(id, cardDto));
+    }
+
+    @PutMapping("/{id}/date")
+    public ResponseEntity<Void> updateExpiryDate(
+            @PathVariable UUID id,
+            @RequestParam BigDecimal newExpiryDate) {
+        cardService.updateExpiryDate(id, newExpiryDate);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")

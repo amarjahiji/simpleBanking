@@ -7,8 +7,10 @@ import io.bankingsystem.banking.model.entity.CardTypeEntity;
 import io.bankingsystem.banking.repository.AccountRepository;
 import io.bankingsystem.banking.repository.CardRepository;
 import io.bankingsystem.banking.repository.CardTypeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -59,6 +61,15 @@ public class CardService {
 
         CardEntity updatedCard = cardRepository.save(card);
         return mappingService.mapToCardDto(updatedCard);
+    }
+
+    @Transactional
+    public void updateExpiryDate(UUID cardId, Date expiryDate) {
+        CardEntity card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+
+        card.setCardExpiryDate(expiryDate);
+        cardRepository.save(card);
     }
 
     public void deleteCard(UUID id) throws Exception {

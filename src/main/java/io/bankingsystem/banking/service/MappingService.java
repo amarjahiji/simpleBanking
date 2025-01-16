@@ -5,37 +5,43 @@ import io.bankingsystem.banking.model.entity.*;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Service
 public class MappingService {
+
+    // Maps AccountEntity to AccountDto
     public AccountDto mapToAccountDto(AccountEntity account) {
         return new AccountDto(
                 account.getId(),
                 account.getAccountNumber(),
                 account.getAccountType(),
                 account.getAccountCurrentBalance(),
-                account.getAccountDateOpened().toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime(),
-                account.getAccountDateClosed() != null ?
-                        new Timestamp(account.getAccountDateClosed().getTime()).toInstant()
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDateTime() : null,
+                account.getAccountDateOpened(),
+                account.getAccountDateClosed(),
                 account.getAccountStatus(),
                 account.getCustomer().getId()
         );
     }
 
+    // Maps AccountDto to AccountEntity
     public AccountEntity mapToAccountEntity(AccountDto dto) {
         AccountEntity entity = new AccountEntity();
         entity.setAccountNumber(dto.getAccountNumber());
         entity.setAccountType(dto.getAccountType());
         entity.setAccountCurrentBalance(dto.getAccountCurrentBalance());
         entity.setAccountStatus(dto.getAccountStatus());
+        if (dto.getAccountDateOpened() != null) {
+            entity.setAccountDateOpened(dto.getAccountDateOpened());
+        }
+        if (dto.getAccountDateClosed() != null) {
+            entity.setAccountDateClosed(dto.getAccountDateClosed());
+        }
         return entity;
     }
 
+    // Maps CardEntity to CardDto
     public CardDto mapToCardDto(CardEntity card) {
         return new CardDto(
                 card.getId(),
@@ -47,6 +53,7 @@ public class MappingService {
         );
     }
 
+    // Maps CardDto to CardEntity
     public CardEntity mapToCardEntity(CardDto dto) {
         CardEntity entity = new CardEntity();
         entity.setCardNumber(dto.getCardNumber());
@@ -55,6 +62,7 @@ public class MappingService {
         return entity;
     }
 
+    // Maps CardTypeEntity to CardTypeDto
     public CardTypeDto mapToCardTypeDto(CardTypeEntity cardType) {
         return new CardTypeDto(
                 cardType.getId(),
@@ -62,12 +70,14 @@ public class MappingService {
         );
     }
 
+    // Maps CardTypeDto to CardTypeEntity
     public CardTypeEntity mapToCardTypeEntity(CardTypeDto dto) {
         CardTypeEntity entity = new CardTypeEntity();
         entity.setCardTypeName(dto.getCardTypeName());
         return entity;
     }
 
+    // Maps CustomerEntity to CustomerDto
     public CustomerDto mapToCustomerDto(CustomerEntity customer) {
         return new CustomerDto(
                 customer.getId(),
@@ -79,6 +89,7 @@ public class MappingService {
         );
     }
 
+    // Maps CustomerDto to CustomerEntity
     public CustomerEntity mapToCustomerEntity(CustomerDto dto) {
         CustomerEntity entity = new CustomerEntity();
         entity.setCustomerFirstName(dto.getCustomerFirstName());
@@ -89,27 +100,37 @@ public class MappingService {
         return entity;
     }
 
+    // Maps TransactionEntity to TransactionDto
     public TransactionDto mapToTransactionDto(TransactionEntity transaction) {
         return new TransactionDto(
                 transaction.getId(),
                 transaction.getTransactionType(),
                 transaction.getTransactionAmount(),
-                transaction.getTransactionDate().toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime(),
+                convertTimestampToLocalDateTime(transaction.getTransactionDate()),
                 transaction.getDescription(),
                 transaction.getAccount().getId()
         );
     }
 
+    // Maps TransactionDto to TransactionEntity
     public TransactionEntity mapToTransactionEntity(TransactionDto dto) {
         TransactionEntity entity = new TransactionEntity();
         entity.setTransactionType(dto.getTransactionType());
         entity.setTransactionAmount(dto.getTransactionAmount());
         entity.setDescription(dto.getTransactionDescription());
+        if (dto.getTransactionDate() != null) {
+            entity.setTransactionDate(convertLocalDateTimeToTimestamp(dto.getTransactionDate()));
+        }
         return entity;
     }
 
+    // Helper: Convert Timestamp to LocalDateTime
+    private LocalDateTime convertTimestampToLocalDateTime(Timestamp timestamp) {
+        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
 
-
+    // Helper: Convert LocalDateTime to Timestamp
+    private Timestamp convertLocalDateTimeToTimestamp(LocalDateTime localDateTime) {
+        return Timestamp.valueOf(localDateTime);
+    }
 }
