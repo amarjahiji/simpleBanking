@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class CardDto {
     private UUID id;
     private String cardNumber;
-    private Date cardExpiryDate;
+    private LocalDate cardExpiryDate;
     private String cardCvv;
     private Integer cardTypeId;
     private UUID accountId;

@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -26,7 +26,7 @@ public class CardEntity {
     private String cardNumber;
 
     @Column(name = "card_expiry_date", nullable = false)
-    private Date cardExpiryDate;
+    private LocalDate cardExpiryDate;
 
     @Column(name = "card_cvv", length = 3, nullable = false)
     private String cardCvv;
