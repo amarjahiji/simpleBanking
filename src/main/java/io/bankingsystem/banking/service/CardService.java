@@ -1,11 +1,9 @@
 package io.bankingsystem.banking.service;
 
-import io.bankingsystem.banking.model.dto.AccountDto;
 import io.bankingsystem.banking.model.dto.CardDto;
 import io.bankingsystem.banking.model.entity.AccountEntity;
 import io.bankingsystem.banking.model.entity.CardEntity;
 import io.bankingsystem.banking.model.entity.CardTypeEntity;
-import io.bankingsystem.banking.model.entity.CustomerEntity;
 import io.bankingsystem.banking.repository.AccountRepository;
 import io.bankingsystem.banking.repository.CardRepository;
 import io.bankingsystem.banking.repository.CardTypeRepository;
@@ -13,8 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -70,18 +67,18 @@ public class CardService {
     }
 
     @Transactional
-    public void updateExpiryDate(UUID cardId, Date expiryDate) {
+    public void updateExpiryDate(UUID cardId, LocalDate newExpiryDate) {
         CardEntity card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
-
-        card.setCardExpiryDate(expiryDate);
-        Repository.save(card);
+                .orElseThrow(() -> new EntityNotFoundException("Card not found with ID: " + cardId));
+        validationService.validateExpiryDate(newExpiryDate);
+        card.setCardExpiryDate(newExpiryDate);
+        cardRepository.save(card);
     }
 
-    public void deleteCard(UUID id) throws Exception {
-        if(!cardRepository.existsById(id)) {
-            throw new Exception("Card not found");
-        }
-        cardRepository.deleteById(id);
+    public void deleteCard(UUID id) {
+        cardRepository.findById(id).ifPresentOrElse(
+                cardRepository::delete, () -> {
+                    throw new EntityNotFoundException("Card not found with ID: " + id);
+                });
     }
 }

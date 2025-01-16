@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,40 +20,59 @@ public class CardController {
     }
 
     @GetMapping
-    public List<CardDto> getAllCards() {
-        return cardService.getAllCards();
+    public ResponseEntity<List<CardDto>> getAllCards() {
+        List<CardDto> cards = cardService.getAllCards();
+        return ResponseEntity.ok(cards);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CardDto> getCardById(@PathVariable UUID id) throws Exception {
-        return ResponseEntity.ok(cardService.getCardById(id));
+    public ResponseEntity<CardDto> getCardById(@PathVariable UUID id) {
+        try {
+            CardDto card = cardService.getCardById(id);
+            return ResponseEntity.ok(card);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @PostMapping
-    public ResponseEntity<CardDto> createCard(@RequestBody CardDto cardDto) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(cardService.createCard(cardDto));
+    public ResponseEntity<CardDto> createCard(@RequestBody CardDto cardDto) {
+        try {
+            CardDto createdCard = cardService.createCard(cardDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdCard);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CardDto> updateCard(@PathVariable UUID id, @RequestBody CardDto cardDto) throws Exception {
-        return ResponseEntity.ok(cardService.updateCard(id, cardDto));
+    public ResponseEntity<CardDto> updateCard(@PathVariable UUID id, @RequestBody CardDto cardDto) {
+        try {
+            CardDto updatedCard = cardService.updateCardById(id, cardDto);
+            return ResponseEntity.ok(updatedCard);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
-    @PutMapping("/{id}/date")
-    public ResponseEntity<Void> updateExpiryDate(
-            @PathVariable UUID id,
-            @RequestParam BigDecimal newExpiryDate) {
-        cardService.updateExpiryDate(id, newExpiryDate);
-        return ResponseEntity.ok().build();
+    @PatchMapping("/{id}/expirydate")
+    public ResponseEntity<Void> updateAccountDateClosed(@PathVariable UUID id, @RequestParam LocalDate cardExpiryDate) {
+        try {
+            cardService.updateExpiryDate(id, cardExpiryDate);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCard(@PathVariable UUID id) throws Exception {
-        cardService.deleteCard(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteCard(@PathVariable UUID id) {
+        try {
+            cardService.deleteCard(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
-
-
 }
 

@@ -32,4 +32,10 @@ public class ValidationService {
         }
     }
 
+    public void validateExpiryDate(LocalDate expiryDate) {
+        if (expiryDate.isBefore(LocalDate.now().plusYears(1))) {
+            throw new IllegalArgumentException("Expiry date must be in the future.");
+        }
+    }
+
 }

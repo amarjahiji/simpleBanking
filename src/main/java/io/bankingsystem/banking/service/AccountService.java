@@ -72,6 +72,7 @@ public class AccountService {
         }
 
         account.setAccountCurrentBalance(newBalance);
+        accountRepository.save(account);
     }
 
     @Transactional
@@ -84,6 +85,7 @@ public class AccountService {
         }
 
         account.setAccountDateClosed(newDateClosed);
+        accountRepository.save(account);
     }
 
     @Transactional
@@ -98,6 +100,7 @@ public class AccountService {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid account status: " + status);
         }
+
     }
 
     public void deleteAccount(UUID id) {
