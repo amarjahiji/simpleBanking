@@ -1,5 +1,6 @@
 package io.bankingsystem.banking.model.dto;
 
+import io.bankingsystem.banking.model.enums.CardTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,5 +13,5 @@ import lombok.Setter;
 
 public class CardTypeDto {
     private Integer id;
-    private String cardTypeName;
+    private CardTypeName cardTypeName;
 }

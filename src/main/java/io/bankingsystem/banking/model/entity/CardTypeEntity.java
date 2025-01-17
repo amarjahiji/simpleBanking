@@ -18,6 +18,7 @@ public class CardTypeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "card_type_name", length = 20)
     private String cardTypeName;
 }
