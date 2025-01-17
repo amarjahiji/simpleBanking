@@ -1,7 +1,7 @@
 package io.bankingsystem.banking.controller;
 
 import io.bankingsystem.banking.model.dto.TransactionDto;
-import io.bankingsystem.banking.service.TransactionService;
+import io.bankingsystem.banking.service.services.TransactionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

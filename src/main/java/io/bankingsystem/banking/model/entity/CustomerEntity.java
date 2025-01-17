@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -29,17 +29,17 @@ public class CustomerEntity {
     private String customerLastName;
 
     @Column(name = "customer_date_of_birth", nullable = false)
-    private Date customerDateOfBirth;
+    private LocalDate customerDateOfBirth;
 
-    @Column(name = "customer_email", length = 25, nullable = false, unique = true)
+    @Column(name = "customer_email", length = 50, nullable = false, unique = true)
     private String customerEmail;
 
     @Column(name = "customer_phone_number", length = 25, nullable = false)
     private String customerPhoneNumber;
 
-    @Column(name = "customer_address", length = 50, nullable = false)
+    @Column(name = "customer_address", length = 100, nullable = false)
     private String customerAddress;
 
-    @Column(name = "customer_password", length = 20, nullable = false)
+    @Column(name = "customer_password", length = 60, nullable = false)
     private String customerPassword;
 }

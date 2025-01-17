@@ -1,10 +1,12 @@
-package io.bankingsystem.banking.service;
+package io.bankingsystem.banking.service.services;
 
 import io.bankingsystem.banking.model.dto.TransactionDto;
 import io.bankingsystem.banking.model.entity.AccountEntity;
 import io.bankingsystem.banking.model.entity.TransactionEntity;
 import io.bankingsystem.banking.repository.AccountRepository;
 import io.bankingsystem.banking.repository.TransactionRepository;
+import io.bankingsystem.banking.service.mappings.TransactionMapping;
+import io.bankingsystem.banking.service.validations.TransactionValidation;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +18,10 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
-    private final MappingService mappingService;
-    private final ValidationService validationService;
+    private final TransactionMapping mappingService;
+    private final TransactionValidation validationService;
 
-    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, MappingService mappingService, ValidationService validationService) {
+    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, TransactionMapping mappingService, TransactionValidation validationService) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.mappingService = mappingService;

@@ -1,4 +1,4 @@
-package io.bankingsystem.banking.service;
+package io.bankingsystem.banking.service.services;
 
 import io.bankingsystem.banking.model.dto.CardDto;
 import io.bankingsystem.banking.model.entity.AccountEntity;
@@ -7,6 +7,8 @@ import io.bankingsystem.banking.model.entity.CardTypeEntity;
 import io.bankingsystem.banking.repository.AccountRepository;
 import io.bankingsystem.banking.repository.CardRepository;
 import io.bankingsystem.banking.repository.CardTypeRepository;
+import io.bankingsystem.banking.service.mappings.CardMapping;
+import io.bankingsystem.banking.service.validations.CardValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,10 @@ public class CardService {
     private final CardRepository cardRepository;
     private final AccountRepository accountRepository;
     private final CardTypeRepository cardTypeRepository;
-    private final MappingService mappingService;
-    private final ValidationService validationService;
+    private final CardMapping mappingService;
+    private final CardValidation validationService;
 
-    public CardService(CardRepository cardRepository, AccountRepository accountRepository, CardTypeRepository cardTypeRepository, MappingService mappingService, ValidationService validationService) {
+    public CardService(CardRepository cardRepository, AccountRepository accountRepository, CardTypeRepository cardTypeRepository, CardMapping mappingService, CardValidation validationService) {
         this.cardRepository = cardRepository;
         this.accountRepository = accountRepository;
         this.cardTypeRepository = cardTypeRepository;
