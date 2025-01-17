@@ -1,5 +1,6 @@
 package io.bankingsystem.banking.model.entity;
 
+import io.bankingsystem.banking.model.enum_fields.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -23,17 +24,21 @@ public class TransactionEntity {
     @Column(name = "id", columnDefinition = "BINARY(16)", nullable = false, updatable = false)
     private UUID id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", length = 20, nullable = false)
-    private String transactionType;
+    private TransactionType transactionType;
 
     @Column(name = "transaction_amount", nullable = false)
     private BigDecimal transactionAmount;
 
     @Column(name = "transaction_date", nullable = false)
-    private Timestamp transactionDate = new Timestamp(System.currentTimeMillis());
+    private LocalDateTime transactionDate;
 
     @Column(name = "transaction_description", length = 100)
-    private String description;
+    private String transactionDescription;
+
+    @Column(name = "transaction_destination", length = 100)
+    private String transactionDestination;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)

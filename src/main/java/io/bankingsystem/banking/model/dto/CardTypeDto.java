@@ -1,6 +1,6 @@
 package io.bankingsystem.banking.model.dto;
 
-import io.bankingsystem.banking.model.enums.CardTypeName;
+import io.bankingsystem.banking.model.enum_fields.CardTypeName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

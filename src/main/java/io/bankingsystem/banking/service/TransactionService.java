@@ -5,6 +5,7 @@ import io.bankingsystem.banking.model.entity.AccountEntity;
 import io.bankingsystem.banking.model.entity.TransactionEntity;
 import io.bankingsystem.banking.repository.AccountRepository;
 import io.bankingsystem.banking.repository.TransactionRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +17,13 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final MappingService mappingService;
+    private final ValidationService validationService;
 
-    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, MappingService mappingService) {
+    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository, MappingService mappingService, ValidationService validationService) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.mappingService = mappingService;
+        this.validationService = validationService;
     }
 
     public List<TransactionDto> getAllTransactions() {
@@ -33,14 +36,14 @@ public class TransactionService {
         return mappingService.mapToTransactionDto(transaction);
     }
 
-    public TransactionDto createTransaction(TransactionDto transactionDto) throws Exception {
+    public TransactionDto createTransaction(TransactionDto transactionDto) {
         AccountEntity account = accountRepository.findById(transactionDto.getAccountId())
-                .orElseThrow(() -> new Exception("Account not found"));
-
+                .orElseThrow(() -> new EntityNotFoundException("Account not found with ID: " + transactionDto.getAccountId()));
+        validationService.validateTransactionDto(transactionDto);
         TransactionEntity transaction = mappingService.mapToTransactionEntity(transactionDto);
         transaction.setAccount(account);
-
         TransactionEntity savedTransaction = transactionRepository.save(transaction);
         return mappingService.mapToTransactionDto(savedTransaction);
     }
+
 }

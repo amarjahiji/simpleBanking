@@ -4,9 +4,6 @@ import io.bankingsystem.banking.model.dto.*;
 import io.bankingsystem.banking.model.entity.*;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Service
 public class MappingService {
@@ -96,36 +93,26 @@ public class MappingService {
     }
 
     // Maps TransactionEntity to TransactionDto
-    public TransactionDto mapToTransactionDto(TransactionEntity transaction) {
+    public TransactionDto mapToTransactionDto(TransactionEntity transactionEntity) {
         return new TransactionDto(
-                transaction.getId(),
-                transaction.getTransactionType(),
-                transaction.getTransactionAmount(),
-                convertTimestampToLocalDateTime(transaction.getTransactionDate()),
-                transaction.getDescription(),
-                transaction.getAccount().getId()
+                transactionEntity.getId(),
+                transactionEntity.getTransactionType(),
+                transactionEntity.getTransactionAmount(),
+                transactionEntity.getTransactionDate(),
+                transactionEntity.getTransactionDescription(),
+                transactionEntity.getTransactionDestination(),
+                transactionEntity.getAccount().getId()
         );
     }
 
     // Maps TransactionDto to TransactionEntity
-    public TransactionEntity mapToTransactionEntity(TransactionDto dto) {
-        TransactionEntity entity = new TransactionEntity();
-        entity.setTransactionType(dto.getTransactionType());
-        entity.setTransactionAmount(dto.getTransactionAmount());
-        entity.setDescription(dto.getTransactionDescription());
-        if (dto.getTransactionDate() != null) {
-            entity.setTransactionDate(convertLocalDateTimeToTimestamp(dto.getTransactionDate()));
-        }
-        return entity;
-    }
-
-    // Helper: Convert Timestamp to LocalDateTime
-    private LocalDateTime convertTimestampToLocalDateTime(Timestamp timestamp) {
-        return timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
-    // Helper: Convert LocalDateTime to Timestamp
-    private Timestamp convertLocalDateTimeToTimestamp(LocalDateTime localDateTime) {
-        return Timestamp.valueOf(localDateTime);
+    public TransactionEntity mapToTransactionEntity(TransactionDto transactionDto) {
+        TransactionEntity transactionEntity = new TransactionEntity();
+        transactionEntity.setTransactionType(transactionDto.getTransactionType());
+        transactionEntity.setTransactionAmount(transactionDto.getTransactionAmount());
+        transactionEntity.setTransactionDate(transactionDto.getTransactionDate());
+        transactionEntity.setTransactionDescription(transactionDto.getTransactionDescription());
+        transactionEntity.setTransactionDestination(transactionDto.getTransactionDestination());
+        return transactionEntity;
     }
 }

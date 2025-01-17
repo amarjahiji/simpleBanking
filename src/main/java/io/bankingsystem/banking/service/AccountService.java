@@ -3,7 +3,7 @@ package io.bankingsystem.banking.service;
 import io.bankingsystem.banking.model.dto.AccountDto;
 import io.bankingsystem.banking.model.entity.AccountEntity;
 import io.bankingsystem.banking.model.entity.CustomerEntity;
-import io.bankingsystem.banking.model.enums.AccountStatus;
+import io.bankingsystem.banking.model.enum_fields.AccountStatus;
 import io.bankingsystem.banking.repository.AccountRepository;
 import io.bankingsystem.banking.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;

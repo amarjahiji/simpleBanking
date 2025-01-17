@@ -1,5 +1,6 @@
 package io.bankingsystem.banking.model.dto;
 
+import io.bankingsystem.banking.model.enum_fields.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,10 @@ import java.util.UUID;
 
 public class TransactionDto {
     private UUID id;
-    private String transactionType;
+    private TransactionType transactionType;
     private BigDecimal transactionAmount;
     private LocalDateTime transactionDate;
     private String transactionDescription;
+    private String transactionDestination;
     private UUID accountId;
 }

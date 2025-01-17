@@ -1,7 +1,7 @@
 package io.bankingsystem.banking.model.entity;
 
-import io.bankingsystem.banking.model.enums.AccountStatus;
-import io.bankingsystem.banking.model.enums.AccountType;
+import io.bankingsystem.banking.model.enum_fields.AccountStatus;
+import io.bankingsystem.banking.model.enum_fields.AccountType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

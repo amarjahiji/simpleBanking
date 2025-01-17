@@ -20,18 +20,28 @@ public class TransactionController {
     }
 
     @GetMapping
-    public List<TransactionDto> getAllTransactions() {
-        return transactionService.getAllTransactions();
+    public ResponseEntity<List<TransactionDto>>getAllTransactions() {
+        List<TransactionDto> transactions = transactionService.getAllTransactions();
+        return ResponseEntity.ok(transactions);
     }
-
+    
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionDto> getTransactionById(@PathVariable UUID id) throws Exception {
-        return ResponseEntity.ok(transactionService.getTransactionById(id));
+    public ResponseEntity<TransactionDto> getTransactionById(@PathVariable UUID id) {
+        try {
+            TransactionDto transaction = transactionService.getTransactionById(id);
+            return ResponseEntity.ok(transaction);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto transactionDto) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(transactionService.createTransaction(transactionDto));
+    @PostMapping
+    public ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto transactionDto) {
+        try {
+            TransactionDto createdTransaction = transactionService.createTransaction(transactionDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 }
