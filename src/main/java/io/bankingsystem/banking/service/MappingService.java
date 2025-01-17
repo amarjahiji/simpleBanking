@@ -70,12 +70,7 @@ public class MappingService {
         );
     }
 
-    // Maps CardTypeDto to CardTypeEntity
-    public CardTypeEntity mapToCardTypeEntity(CardTypeDto dto) {
-        CardTypeEntity entity = new CardTypeEntity();
-        entity.setCardTypeName(dto.getCardTypeName());
-        return entity;
-    }
+
 
     // Maps CustomerEntity to CustomerDto
     public CustomerDto mapToCustomerDto(CustomerEntity customer) {

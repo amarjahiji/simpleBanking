@@ -1,5 +1,6 @@
 package io.bankingsystem.banking.model.entity;
 
+import io.bankingsystem.banking.model.enums.CardTypeName;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,5 +21,5 @@ public class CardTypeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type_name", length = 20)
-    private String cardTypeName;
+    private CardTypeName cardTypeName;
 }
