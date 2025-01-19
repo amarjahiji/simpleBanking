@@ -70,7 +70,7 @@ public class CustomerController {
         }
     }
 
-    @PatchMapping("/{id}/address")
+    @PatchMapping("/address/{id}")
     public ResponseEntity<Void> updateCustomerAddress(@PathVariable UUID id, @RequestParam String address) {
         try {
             customerService.updateAddress(id, address);
