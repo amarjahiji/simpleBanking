@@ -3,6 +3,7 @@ package io.bankingsystem.banking.service.validations;
 import io.bankingsystem.banking.model.dto.CustomerDto;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,12 @@ public class CustomerValidation {
         }
         if (customerDto.getCustomerLastName() == null || customerDto.getCustomerLastName().isEmpty()) {
             throw new IllegalArgumentException("Customer last name is required");
+        }
+        if (customerDto.getCustomerDateOfBirth() == null) {
+            throw new IllegalArgumentException("Date of birth is required");
+        }
+        if (customerDto.getCustomerDateOfBirth().isAfter(LocalDate.now().minusYears(15))) {
+            throw new IllegalArgumentException("Customer must be at least 15 years old");
         }
         if (customerDto.getCustomerEmail() == null || customerDto.getCustomerEmail().isEmpty()) {
             throw new IllegalArgumentException("Customer email is required");

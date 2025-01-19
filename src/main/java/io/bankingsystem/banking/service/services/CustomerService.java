@@ -1,7 +1,10 @@
 package io.bankingsystem.banking.service.services;
 
+import io.bankingsystem.banking.model.dto.AccountDto;
+import io.bankingsystem.banking.model.dto.CustomerAccountsDto;
 import io.bankingsystem.banking.model.dto.CustomerDto;
 import io.bankingsystem.banking.model.entity.CustomerEntity;
+import io.bankingsystem.banking.repository.AccountRepository;
 import io.bankingsystem.banking.repository.CustomerRepository;
 import io.bankingsystem.banking.service.mappings.CustomerMapping;
 import io.bankingsystem.banking.service.validations.CustomerValidation;
@@ -17,12 +20,14 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerService {
 private final CustomerRepository customerRepository;
+private final AccountRepository accountRepository;
 private final CustomerMapping mappingService;
 private final CustomerValidation validationService;
 private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(CustomerRepository customerRepository, CustomerMapping mappingService, CustomerValidation validationService, PasswordEncoder passwordEncoder) {
+    public CustomerService(CustomerRepository customerRepository, AccountRepository accountRepository, CustomerMapping mappingService, CustomerValidation validationService, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
+        this.accountRepository = accountRepository;
         this.mappingService = mappingService;
         this.validationService = validationService;
         this.passwordEncoder = passwordEncoder;
@@ -32,10 +37,66 @@ private final PasswordEncoder passwordEncoder;
         return customerRepository.findAll().stream().map(mappingService::mapToCustomerDto).collect(Collectors.toList());
     }
 
-    public CustomerDto getCustomerById(UUID id) throws Exception {
+    public CustomerDto getCustomerById(UUID id) {
         CustomerEntity customer = customerRepository.findById(id)
-                .orElseThrow(() -> new Exception("Customer not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
         return mappingService.mapToCustomerDto(customer);
+    }
+
+    public List<CustomerAccountsDto> getCustomersWithAccounts() {
+        List<CustomerEntity> customers = customerRepository.findAll();
+        return customers.stream().map(customer -> {
+            List<AccountDto> accounts = accountRepository.findByCustomerId(customer.getId())
+                    .stream()
+                    .map(account -> new AccountDto(
+                            account.getId(),
+                            account.getAccountNumber(),
+                            account.getAccountType(),
+                            account.getAccountCurrentBalance(),
+                            account.getAccountDateOpened(),
+                            account.getAccountDateClosed(),
+                            account.getAccountStatus(),
+                            account.getCustomer().getId()
+                    ))
+                    .collect(Collectors.toList());
+
+            return new CustomerAccountsDto(
+                    customer.getId(),
+                    customer.getCustomerFirstName(),
+                    customer.getCustomerLastName(),
+                    customer.getCustomerEmail(),
+                    customer.getCustomerPhoneNumber(),
+                    accounts
+            );
+        }).collect(Collectors.toList());
+    }
+
+    public CustomerAccountsDto getCustomerWithAccountsById(UUID customerId) {
+        CustomerEntity customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
+
+        List<AccountDto> accounts = accountRepository.findByCustomerId(customerId)
+                .stream()
+                .map(account -> new AccountDto(
+                        account.getId(),
+                        account.getAccountNumber(),
+                        account.getAccountType(),
+                        account.getAccountCurrentBalance(),
+                        account.getAccountDateOpened(),
+                        account.getAccountDateClosed(),
+                        account.getAccountStatus(),
+                        account.getCustomer().getId()
+                ))
+                .collect(Collectors.toList());
+
+        return new CustomerAccountsDto(
+                customer.getId(),
+                customer.getCustomerFirstName(),
+                customer.getCustomerLastName(),
+                customer.getCustomerEmail(),
+                customer.getCustomerPhoneNumber(),
+                accounts
+        );
     }
 
     public CustomerDto createCustomer(CustomerDto customerDto) {
@@ -51,11 +112,12 @@ private final PasswordEncoder passwordEncoder;
         validationService.validateCustomerDto(customerDto);
         customer.setCustomerFirstName(customerDto.getCustomerFirstName());
         customer.setCustomerLastName(customerDto.getCustomerLastName());
+        customer.setCustomerDateOfBirth(customerDto.getCustomerDateOfBirth());
         customer.setCustomerEmail(customerDto.getCustomerEmail());
         customer.setCustomerPhoneNumber(customerDto.getCustomerPhoneNumber());
         customer.setCustomerAddress(customerDto.getCustomerAddress());
         if (customerDto.getCustomerPassword() != null && !customerDto.getCustomerPassword().isEmpty()) {
-            customer.setCustomerPassword(customerDto.getCustomerPassword());
+            customer.setCustomerPassword(passwordEncoder.encode(customerDto.getCustomerPassword()));
         }
         CustomerEntity updatedCustomer = customerRepository.save(customer);
         return mappingService.mapToCustomerDto(updatedCustomer);

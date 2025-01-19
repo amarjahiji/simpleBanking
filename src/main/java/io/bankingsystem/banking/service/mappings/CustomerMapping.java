@@ -19,6 +19,7 @@ public class CustomerMapping {
         CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setCustomerFirstName(customerDto.getCustomerFirstName());
         customerEntity.setCustomerLastName(customerDto.getCustomerLastName());
+        customerEntity.setCustomerDateOfBirth(customerDto.getCustomerDateOfBirth()); // Added
         customerEntity.setCustomerEmail(customerDto.getCustomerEmail());
         customerEntity.setCustomerPhoneNumber(customerDto.getCustomerPhoneNumber());
         customerEntity.setCustomerAddress(customerDto.getCustomerAddress());

@@ -18,10 +18,13 @@ public class AccountValidation {
         if (accountDto.getAccountType() == null || accountDto.getAccountStatus() == null) {
             throw new IllegalArgumentException("Account type and status cannot be null");
         }
+        if (accountDto.getAccountNumber() == null || accountDto.getAccountNumber().trim().isEmpty() || accountDto.getAccountNumber().length() < 8 || accountDto.getAccountNumber().length() > 12) {
+            throw new IllegalArgumentException("Account number format not valid");
+        }
     }
 
     public void validateAccountNotClosed(AccountEntity account) {
-        if (AccountStatus.CLOSED.name().equals(account.getAccountStatus())) {
+        if (AccountStatus.CLOSED.equals(account.getAccountStatus())){
             throw new IllegalStateException("Cannot update the account as it is closed");
         }
     }

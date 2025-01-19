@@ -33,6 +33,9 @@ public class AccountMapping {
         if (dto.getAccountDateClosed() != null) {
             entity.setAccountDateClosed(dto.getAccountDateClosed());
         }
+        if (dto.getId() != null) {
+            entity.setId(dto.getId());
+        }
         return entity;
     }
 }

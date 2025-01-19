@@ -1,5 +1,6 @@
 package io.bankingsystem.banking.controller;
 
+import io.bankingsystem.banking.model.dto.CustomerAccountsDto;
 import io.bankingsystem.banking.model.dto.CustomerDto;
 import io.bankingsystem.banking.service.services.CustomerService;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,21 @@ public class CustomerController {
         try {
             CustomerDto customer = customerService.getCustomerById(id);
             return ResponseEntity.ok(customer);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/accounts")
+    public List<CustomerAccountsDto> getCustomersWithAccounts() {
+        return customerService.getCustomersWithAccounts();
+    }
+
+    @GetMapping("/account/{id}")
+    public ResponseEntity<CustomerAccountsDto> getCustomerWithAccountsById(@PathVariable UUID id) {
+        try {
+            CustomerAccountsDto customerAccounts = customerService.getCustomerWithAccountsById(id);
+            return ResponseEntity.ok(customerAccounts);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
