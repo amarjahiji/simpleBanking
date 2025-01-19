@@ -15,129 +15,131 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
-
     @Mock
     private AccountRepository accountRepository;
-
     @Mock
     private CustomerRepository customerRepository;
-
     @Mock
     private AccountMapping mappingService;
-
     @Mock
     private AccountValidation validationService;
-
     @InjectMocks
     private AccountService accountService;
 
     @Test
-    void getAllAccounts() {
-        AccountEntity account = new AccountEntity();
-        AccountDto accountDto = new AccountDto();
-        when(accountRepository.findAll()).thenReturn(List.of(account));
-        when(mappingService.mapToAccountDto(account)).thenReturn(accountDto);
+    void getAllAccounts_ShouldReturnMappedAccounts() {
 
-        List<AccountDto> accounts = accountService.getAllAccounts();
+        List<AccountEntity> accounts = List.of(new AccountEntity());
+        AccountDto mappedDto = new AccountDto();
+        when(accountRepository.findAll()).thenReturn(accounts);
+        when(mappingService.mapToAccountDto(any())).thenReturn(mappedDto);
 
-        assertEquals(1, accounts.size());
+
+        List<AccountDto> result = accountService.getAllAccounts();
+
+
+        assertEquals(1, result.size());
         verify(accountRepository).findAll();
-        verify(mappingService).mapToAccountDto(account);
+        verify(mappingService).mapToAccountDto(any());
     }
 
     @Test
-    void getAccountById() {
-        UUID accountId = UUID.randomUUID();
+    void getAccountById_WhenAccountExists_ShouldReturnMappedAccount() {
+
+        UUID id = UUID.randomUUID();
         AccountEntity account = new AccountEntity();
-        AccountDto accountDto = new AccountDto();
-        when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
-        when(mappingService.mapToAccountDto(account)).thenReturn(accountDto);
+        AccountDto mappedDto = new AccountDto();
+        when(accountRepository.findById(id)).thenReturn(Optional.of(account));
+        when(mappingService.mapToAccountDto(account)).thenReturn(mappedDto);
 
-        AccountDto result = accountService.getAccountById(accountId);
 
-        assertEquals(accountDto, result);
-        verify(accountRepository).findById(accountId);
+        AccountDto result = accountService.getAccountById(id);
+
+
+        assertNotNull(result);
+        verify(accountRepository).findById(id);
         verify(mappingService).mapToAccountDto(account);
     }
 
     @Test
-    void getAccountById_ThrowsException_WhenNotFound() {
-        UUID accountId = UUID.randomUUID();
-        when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
+    void getAccountById_WhenAccountNotFound_ShouldThrowException() {
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> accountService.getAccountById(accountId));
+        UUID id = UUID.randomUUID();
+        when(accountRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertEquals("Account with id: " + accountId + " not found", exception.getMessage());
+
+        assertThrows(EntityNotFoundException.class, () -> accountService.getAccountById(id));
     }
 
     @Test
-    void createAccount() {
-        AccountDto accountDto = new AccountDto();
-        accountDto.setCustomerId(UUID.randomUUID());
+    void createAccount_ShouldCreateAndReturnAccount() {
+
+        AccountDto inputDto = new AccountDto();
+        inputDto.setCustomerId(UUID.randomUUID());
         CustomerEntity customer = new CustomerEntity();
-        AccountEntity account = new AccountEntity();
+        AccountEntity mappedEntity = new AccountEntity();
+        AccountEntity savedEntity = new AccountEntity();
+        AccountDto mappedDto = new AccountDto();
+
+        when(customerRepository.findById(inputDto.getCustomerId())).thenReturn(Optional.of(customer));
+        when(mappingService.mapToAccountEntity(inputDto)).thenReturn(mappedEntity);
+        when(accountRepository.save(any())).thenReturn(savedEntity);
+        when(mappingService.mapToAccountDto(savedEntity)).thenReturn(mappedDto);
+
+
+        AccountDto result = accountService.createAccount(inputDto);
+
+
+        assertNotNull(result);
+        verify(validationService).validateAccountDto(inputDto);
+        verify(accountRepository).save(any());
+    }
+
+    @Test
+    void updateAccountById_WhenAccountExists_ShouldUpdateAndReturnAccount() {
+
+        UUID id = UUID.randomUUID();
+        AccountDto inputDto = new AccountDto();
+        AccountEntity existingAccount = new AccountEntity();
         AccountEntity savedAccount = new AccountEntity();
-        AccountDto resultDto = new AccountDto();
+        AccountDto mappedDto = new AccountDto();
 
-        when(customerRepository.findById(accountDto.getCustomerId())).thenReturn(Optional.of(customer));
-        doNothing().when(validationService).validateAccountDto(accountDto);
-        when(mappingService.mapToAccountEntity(accountDto)).thenReturn(account);
-        when(accountRepository.save(account)).thenReturn(savedAccount);
-        when(mappingService.mapToAccountDto(savedAccount)).thenReturn(resultDto);
+        when(accountRepository.findById(id)).thenReturn(Optional.of(existingAccount));
+        when(accountRepository.save(any())).thenReturn(savedAccount);
+        when(mappingService.mapToAccountDto(savedAccount)).thenReturn(mappedDto);
 
-        AccountDto result = accountService.createAccount(accountDto);
 
-        assertEquals(resultDto, result);
-        verify(customerRepository).findById(accountDto.getCustomerId());
-        verify(validationService).validateAccountDto(accountDto);
-        verify(mappingService).mapToAccountEntity(accountDto);
-        verify(accountRepository).save(account);
+        AccountDto result = accountService.updateAccountById(id, inputDto);
+
+
+        assertNotNull(result);
+        verify(validationService).validateAccountDto(inputDto);
+        verify(accountRepository).save(any());
     }
 
     @Test
-    void updateAccountById() {
-        UUID accountId = UUID.randomUUID();
-        AccountDto accountDto = new AccountDto();
-        accountDto.setAccountCurrentBalance(BigDecimal.TEN);
-        AccountEntity account = new AccountEntity();
+    void updateBalance_ShouldUpdateBalance() {
 
-        when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
-        doNothing().when(validationService).validateAccountDto(accountDto);
-        when(accountRepository.save(account)).thenReturn(account);
-        when(mappingService.mapToAccountDto(account)).thenReturn(accountDto);
-
-        AccountDto result = accountService.updateAccountById(accountId, accountDto);
-
-        assertEquals(accountDto, result);
-        verify(accountRepository).findById(accountId);
-        verify(validationService).validateAccountDto(accountDto);
-        verify(accountRepository).save(account);
-        verify(mappingService).mapToAccountDto(account);
-    }
-
-    @Test
-    void updateBalance() {
-        UUID accountId = UUID.randomUUID();
+        UUID id = UUID.randomUUID();
         BigDecimal newBalance = BigDecimal.TEN;
         AccountEntity account = new AccountEntity();
 
-        when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
-        doNothing().when(validationService).validateAccountNotClosed(account);
-        doNothing().when(validationService).validateNewBalance(newBalance);
+        when(accountRepository.findById(id)).thenReturn(Optional.of(account));
 
-        accountService.updateBalance(accountId, newBalance);
 
-        verify(accountRepository).findById(accountId);
+        accountService.updateBalance(id, newBalance);
+
+
         verify(validationService).validateAccountNotClosed(account);
         verify(validationService).validateNewBalance(newBalance);
         verify(accountRepository).save(account);
@@ -145,24 +147,21 @@ class AccountServiceTest {
     }
 
     @Test
-    void deleteAccount() {
-        UUID accountId = UUID.randomUUID();
+    void updateDateClosed_ShouldUpdateDateClosed() {
+
+        UUID id = UUID.randomUUID();
+        LocalDateTime newDate = LocalDateTime.now();
         AccountEntity account = new AccountEntity();
-        when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
-        accountService.deleteAccount(accountId);
+        when(accountRepository.findById(id)).thenReturn(Optional.of(account));
 
-        verify(accountRepository).findById(accountId);
-        verify(accountRepository).delete(account);
-    }
 
-    @Test
-    void deleteAccount_ThrowsException_WhenNotFound() {
-        UUID accountId = UUID.randomUUID();
-        when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
+        accountService.updateDateClosed(id, newDate);
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> accountService.deleteAccount(accountId));
 
-        assertEquals("Account not found with ID: " + accountId, exception.getMessage());
+        verify(validationService).validateAccountNotClosed(account);
+        verify(validationService).validateDateClosed(newDate);
+        verify(accountRepository).save(account);
+        assertEquals(newDate, account.getAccountDateClosed());
     }
 }

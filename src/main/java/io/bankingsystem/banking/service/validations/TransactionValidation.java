@@ -92,10 +92,4 @@ public class TransactionValidation {
             throw new IllegalArgumentException("Invalid destination account ID format");
         }
     }
-
-    public void validateSufficientFunds(AccountEntity account, BigDecimal amount) {
-        if (account.getAccountCurrentBalance().compareTo(amount) < 0) {
-            throw new IllegalStateException("Insufficient funds");
-        }
-    }
 }

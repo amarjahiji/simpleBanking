@@ -21,5 +21,4 @@ public class CardTypeService {
     public List<CardTypeDto> getAllCardTypes() {
         return cardTypeRepository.findAll().stream().map(mappingService::mapToCardTypeDto).collect(Collectors.toList());
     }
-
 }
