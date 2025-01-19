@@ -32,6 +32,7 @@ public class AccountService {
         this.validationService = validationService;
     }
 
+
     public List<AccountDto> getAllAccounts() {
         return accountRepository.findAll().stream().map(mappingService::mapToAccountDto).collect(Collectors.toList());
     }
