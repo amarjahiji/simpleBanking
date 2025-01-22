@@ -66,6 +66,8 @@ private final PasswordEncoder passwordEncoder;
                     customer.getCustomerLastName(),
                     customer.getCustomerEmail(),
                     customer.getCustomerPhoneNumber(),
+                    customer.getCustomerAddress(),
+                    customer.getCustomerRole(),
                     accounts
             );
         }).collect(Collectors.toList());
@@ -95,6 +97,8 @@ private final PasswordEncoder passwordEncoder;
                 customer.getCustomerLastName(),
                 customer.getCustomerEmail(),
                 customer.getCustomerPhoneNumber(),
+                customer.getCustomerAddress(),
+                customer.getCustomerRole(),
                 accounts
         );
     }

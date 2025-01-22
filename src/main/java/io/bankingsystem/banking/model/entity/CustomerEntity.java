@@ -1,5 +1,6 @@
 package io.bankingsystem.banking.model.entity;
 
+import io.bankingsystem.banking.model.enum_fields.CustomerRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,4 +43,8 @@ public class CustomerEntity {
 
     @Column(name = "customer_password", length = 60, nullable = false)
     private String customerPassword;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "customer_role", length = 20, nullable = false)
+    private CustomerRole customerRole;
 }

@@ -1,11 +1,13 @@
 package io.bankingsystem.banking.service.services;
 
-import io.bankingsystem.banking.model.dto.AccountDto;
+import io.bankingsystem.banking.model.dto.*;
 import io.bankingsystem.banking.model.entity.AccountEntity;
 import io.bankingsystem.banking.model.entity.CustomerEntity;
 import io.bankingsystem.banking.model.enum_fields.AccountStatus;
 import io.bankingsystem.banking.repository.AccountRepository;
+import io.bankingsystem.banking.repository.CardRepository;
 import io.bankingsystem.banking.repository.CustomerRepository;
+import io.bankingsystem.banking.repository.TransactionRepository;
 import io.bankingsystem.banking.service.mappings.AccountMapping;
 import io.bankingsystem.banking.service.validations.AccountValidation;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,12 +26,16 @@ public class AccountService {
     private final CustomerRepository customerRepository;
     private final AccountMapping mappingService;
     private final AccountValidation validationService;
+    private final CardRepository cardRepository;
+    private final TransactionRepository transactionRepository;
 
-    public AccountService(AccountRepository accountRepository, CustomerRepository customerRepository, AccountMapping mappingService, AccountValidation validationService) {
+    public AccountService(AccountRepository accountRepository, CustomerRepository customerRepository, AccountMapping mappingService, AccountValidation validationService, CardRepository cardRepository, TransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
         this.mappingService = mappingService;
         this.validationService = validationService;
+        this.cardRepository = cardRepository;
+        this.transactionRepository = transactionRepository;
     }
 
 
@@ -41,6 +47,124 @@ public class AccountService {
         AccountEntity account = accountRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Account with id: " + id + " not found"));
         return mappingService.mapToAccountDto(account);
+    }
+
+    public List<AccountCardsDto> getAccountsWithCards() {
+        List<AccountEntity> accounts = accountRepository.findAll();
+        return accounts.stream().map(account -> {
+            List<CardDto> cards = cardRepository.findByAccountId(account.getId())
+                    .stream()
+                    .map(card -> new CardDto(
+                            card.getId(),
+                            card.getCardNumber(),
+                            card.getCardExpiryDate(),
+                            card.getCardCvv(),
+                            card.getCardType().getId(),
+                            card.getAccount().getId()
+                    ))
+                    .toList();
+
+            return new AccountCardsDto(
+                    account.getId(),
+                    account.getAccountNumber(),
+                    account.getAccountType(),
+                    account.getAccountCurrentBalance(),
+                    account.getAccountDateOpened(),
+                    account.getAccountDateClosed(),
+                    account.getAccountStatus(),
+                    account.getCustomer().getId(),
+                    cards
+            );
+        }).collect(Collectors.toList());
+    }
+
+    public AccountCardsDto getAccountWithCardsById(UUID accountId) {
+        AccountEntity account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found with id: " + accountId));
+
+        List<CardDto> cards = cardRepository.findByAccountId(accountId)
+                .stream()
+                .map(card -> new CardDto(
+                        card.getId(),
+                        card.getCardNumber(),
+                        card.getCardExpiryDate(),
+                        card.getCardCvv(),
+                        card.getCardType().getId(),
+                        card.getAccount().getId()
+                ))
+                .toList();
+
+        return new AccountCardsDto(
+                account.getId(),
+                account.getAccountNumber(),
+                account.getAccountType(),
+                account.getAccountCurrentBalance(),
+                account.getAccountDateOpened(),
+                account.getAccountDateClosed(),
+                account.getAccountStatus(),
+                account.getCustomer().getId(),
+                cards
+        );
+    }
+
+    public List<AccountTransactionsDto> getAccountsWithTransactions() {
+        List<AccountEntity> accounts = accountRepository.findAll();
+        return accounts.stream().map(account -> {
+            List<TransactionDto> transactions = transactionRepository.findByAccountId(account.getId())
+                    .stream()
+                    .map(transaction -> new TransactionDto(
+                            transaction.getId(),
+                            transaction.getTransactionType(),
+                            transaction.getTransactionAmount(),
+                            transaction.getTransactionDate(),
+                            transaction.getTransactionDescription(),
+                            transaction.getTransactionDestination(),
+                            transaction.getAccount().getId()
+                    ))
+                    .toList();
+
+            return new AccountTransactionsDto(
+                    account.getId(),
+                    account.getAccountNumber(),
+                    account.getAccountType(),
+                    account.getAccountCurrentBalance(),
+                    account.getAccountDateOpened(),
+                    account.getAccountDateClosed(),
+                    account.getAccountStatus(),
+                    account.getCustomer().getId(),
+                    transactions
+            );
+        }).collect(Collectors.toList());
+    }
+
+    public AccountTransactionsDto getAccountWithTransactionsById(UUID accountId) {
+        AccountEntity account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found with id: " + accountId));
+
+        List<TransactionDto> transactions = transactionRepository.findByAccountId(accountId)
+                .stream()
+                .map(transaction -> new TransactionDto(
+                        transaction.getId(),
+                        transaction.getTransactionType(),
+                        transaction.getTransactionAmount(),
+                        transaction.getTransactionDate(),
+                        transaction.getTransactionDescription(),
+                        transaction.getTransactionDestination(),
+                        transaction.getAccount().getId()
+                ))
+                .toList();
+
+        return new AccountTransactionsDto(
+                account.getId(),
+                account.getAccountNumber(),
+                account.getAccountType(),
+                account.getAccountCurrentBalance(),
+                account.getAccountDateOpened(),
+                account.getAccountDateClosed(),
+                account.getAccountStatus(),
+                account.getCustomer().getId(),
+                transactions
+        );
     }
 
     public AccountDto createAccount(AccountDto accountDto) {

@@ -1,5 +1,6 @@
 package io.bankingsystem.banking.model.dto;
 
+import io.bankingsystem.banking.model.enum_fields.CustomerRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,4 +23,5 @@ public class CustomerDto {
     private String customerPhoneNumber;
     private String customerAddress;
     private String customerPassword;
+    private CustomerRole customerRole;
 }

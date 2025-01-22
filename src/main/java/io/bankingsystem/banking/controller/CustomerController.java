@@ -40,7 +40,7 @@ public class CustomerController {
         return customerService.getCustomersWithAccounts();
     }
 
-    @GetMapping("/account/{id}")
+    @GetMapping("/accounts/{id}")
     public ResponseEntity<CustomerAccountsDto> getCustomerWithAccountsById(@PathVariable UUID id) {
         try {
             CustomerAccountsDto customerAccounts = customerService.getCustomerWithAccountsById(id);

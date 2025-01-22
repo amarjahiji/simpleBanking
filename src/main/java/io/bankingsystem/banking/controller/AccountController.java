@@ -1,6 +1,8 @@
 package io.bankingsystem.banking.controller;
 
+import io.bankingsystem.banking.model.dto.AccountCardsDto;
 import io.bankingsystem.banking.model.dto.AccountDto;
+import io.bankingsystem.banking.model.dto.AccountTransactionsDto;
 import io.bankingsystem.banking.service.services.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,36 @@ public class AccountController {
         try {
             AccountDto account = accountService.getAccountById(id);
             return ResponseEntity.ok(account);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/cards")
+    public List<AccountCardsDto> getAccountWithCards() {
+        return accountService.getAccountsWithCards();
+    }
+
+    @GetMapping("/cards/{id}")
+    public ResponseEntity<AccountCardsDto> getAccountWithCardsById(@PathVariable UUID id) {
+        try {
+            AccountCardsDto accountCards = accountService.getAccountWithCardsById(id);
+            return ResponseEntity.ok(accountCards);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/cards")
+    public List<AccountTransactionsDto> getAccountWithTransactions() {
+        return accountService.getAccountsWithTransactions();
+    }
+
+    @GetMapping("/cards/{id}")
+    public ResponseEntity<AccountTransactionsDto> getAccountWithTransactionsById(@PathVariable UUID id) {
+        try {
+            AccountTransactionsDto accountTransactions = accountService.getAccountWithTransactionsById(id);
+            return ResponseEntity.ok(accountTransactions);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
