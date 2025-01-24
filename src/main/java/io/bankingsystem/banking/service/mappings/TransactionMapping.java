@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class TransactionMapping {
 
-    // Maps TransactionEntity to TransactionDto
     public TransactionDto mapToTransactionDto(TransactionEntity transactionEntity) {
         return new TransactionDto(
                 transactionEntity.getId(),
@@ -20,7 +19,6 @@ public class TransactionMapping {
         );
     }
 
-    // Maps TransactionDto to TransactionEntity
     public TransactionEntity mapToTransactionEntity(TransactionDto transactionDto) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setTransactionType(transactionDto.getTransactionType());

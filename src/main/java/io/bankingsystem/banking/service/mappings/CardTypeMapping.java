@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CardTypeMapping {
 
-    // Maps CardTypeEntity to CardTypeDto
     public CardTypeDto mapToCardTypeDto(CardTypeEntity cardType) {
         return new CardTypeDto(
                 cardType.getId(),

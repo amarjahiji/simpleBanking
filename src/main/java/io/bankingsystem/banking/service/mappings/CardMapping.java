@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CardMapping {
 
-    // Maps CardEntity to CardDto
     public CardDto mapToCardDto(CardEntity card) {
         return new CardDto(
                 card.getId(),
@@ -19,7 +18,6 @@ public class CardMapping {
         );
     }
 
-    // Maps CardDto to CardEntity
     public CardEntity mapToCardEntity(CardDto dto) {
         CardEntity entity = new CardEntity();
         entity.setCardNumber(dto.getCardNumber());

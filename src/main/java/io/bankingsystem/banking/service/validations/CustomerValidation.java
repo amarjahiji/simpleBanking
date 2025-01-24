@@ -67,4 +67,10 @@ public class CustomerValidation {
             throw new IllegalArgumentException("Invalid phone number format");
         }
     }
+
+    public void validateCustomerAddress(String address) {
+        if (address == null || address.isEmpty()) {
+            throw new IllegalArgumentException("Invalid address format");
+        }
+    }
 }

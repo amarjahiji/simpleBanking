@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -53,12 +54,12 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/cards")
+    @GetMapping("/transactions")
     public List<AccountTransactionsDto> getAccountWithTransactions() {
         return accountService.getAccountsWithTransactions();
     }
 
-    @GetMapping("/cards/{id}")
+    @GetMapping("/transaction/{id}")
     public ResponseEntity<AccountTransactionsDto> getAccountWithTransactionsById(@PathVariable UUID id) {
         try {
             AccountTransactionsDto accountTransactions = accountService.getAccountWithTransactionsById(id);
@@ -88,33 +89,45 @@ public class AccountController {
         }
     }
 
-    @PatchMapping("/{id}/balance")
-    public ResponseEntity<Void> updateAccountBalance(@PathVariable UUID id, @RequestParam BigDecimal balance) {
+    @PatchMapping("/balance/{id}")
+    public ResponseEntity<AccountDto> updateAccountCurrentBalance(
+            @PathVariable UUID id,
+            @RequestBody Map<String, BigDecimal> currentBalanceUpdate
+    ) {
         try {
-            accountService.updateBalance(id, balance);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            BigDecimal newCurrentBalance = currentBalanceUpdate.get("accountCurrentBalance");
+            AccountDto updatedAccount = accountService.updateAccountCurrentBalance(id, newCurrentBalance);
+            return ResponseEntity.ok(updatedAccount);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<Void> updateAccountStatus(@PathVariable UUID id, @RequestParam String status) {
+    @PatchMapping("/date-closed/{id}")
+    public ResponseEntity<AccountDto> updateAccountDateClosed(
+            @PathVariable UUID id,
+            @RequestBody Map<String, LocalDateTime> dateClosedUpdate
+    ) {
         try {
-            accountService.updateStatus(id, status);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            LocalDateTime newDateClosed = dateClosedUpdate.get("accountClosedDate");
+            AccountDto updatedAccount = accountService.updateAccountDateClosed(id, newDateClosed);
+            return ResponseEntity.ok(updatedAccount);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
-    @PatchMapping("/{id}/date-closed")
-    public ResponseEntity<Void> updateAccountDateClosed(@PathVariable UUID id, @RequestParam LocalDateTime dateClosed) {
+    @PatchMapping("/status/{id}")
+    public ResponseEntity<AccountDto> updateAccountStatus(
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> statusUpdate
+    ) {
         try {
-            accountService.updateDateClosed(id, dateClosed);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            String newStatus = statusUpdate.get("accountStatus");
+            AccountDto updatedAccount = accountService.updateAccountStatus(id, newStatus);
+            return ResponseEntity.ok(updatedAccount);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 

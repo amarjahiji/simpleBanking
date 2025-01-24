@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +26,18 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
+    @GetMapping("/young")
+    public ResponseEntity<List<CustomerDto>> getCustomersYoungerThan24() {
+        List<CustomerDto> customers = customerService.getCustomersYoungerThan24();
+        return ResponseEntity.ok(customers);
+    }
+
+    @GetMapping("/old")
+    public ResponseEntity<List<CustomerDto>> getCustomersOlderThan64() {
+        List<CustomerDto> customers = customerService.getCustomersOlderThan64();
+        return ResponseEntity.ok(customers);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDto> getCustomerById(@PathVariable UUID id) {
         try {
@@ -36,8 +49,13 @@ public class CustomerController {
     }
 
     @GetMapping("/accounts")
-    public List<CustomerAccountsDto> getCustomersWithAccounts() {
-        return customerService.getCustomersWithAccounts();
+    public ResponseEntity<List<CustomerAccountsDto>> getCustomersWithAccounts() {
+        try {
+            List<CustomerAccountsDto> customers = customerService.getCustomersWithAccounts();
+            return ResponseEntity.ok(customers);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @GetMapping("/accounts/{id}")
@@ -49,6 +67,13 @@ public class CustomerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
+    //This works as well account as a list simply needs to be added on dto, It is not a technical issue
+//    @GetMapping("/details/{id}")
+//    public ResponseEntity<CustomerDto> getCustomerWithAccountsAndCards(@PathVariable UUID id) {
+//        CustomerDto customerDto = customerService.getCustomerWithAccountsAndCards(id);
+//        return ResponseEntity.ok(customerDto);
+//    }
 
     @PostMapping
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) {
@@ -71,44 +96,62 @@ public class CustomerController {
     }
 
     @PatchMapping("/address/{id}")
-    public ResponseEntity<Void> updateCustomerAddress(@PathVariable UUID id, @RequestParam String address) {
+    public ResponseEntity<CustomerDto> updateCustomerAddress(
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> addressUpdate
+    ) {
         try {
-            customerService.updateAddress(id, address);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            String newAddress = addressUpdate.get("customerAddress");
+            CustomerDto updatedCustomer = customerService.updateCustomerAddress(id, newAddress);
+            return ResponseEntity.ok(updatedCustomer);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
-    @PatchMapping("/{id}/email")
-    public ResponseEntity<Void> updateCustomerEmail(@PathVariable UUID id, @RequestParam String email) {
+
+    @PatchMapping("/phone-number/{id}")
+    public ResponseEntity<CustomerDto> updateCustomerPhoneNumber(
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> phoneNumberUpdate
+    ) {
         try {
-            customerService.updateEmail(id, email);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            String newPhoneNumber = phoneNumberUpdate.get("customerPhoneNumber");
+            CustomerDto updatedCustomer = customerService.updateCustomerPhoneNumber(id, newPhoneNumber);
+            return ResponseEntity.ok(updatedCustomer);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
-    @PatchMapping("/{id}/phone-number")
-    public ResponseEntity<Void> updateCustomerPhoneNumber(@PathVariable UUID id, @RequestParam String phoneNumber) {
+    @PatchMapping("/email/{id}")
+    public ResponseEntity<CustomerDto> updateCustomerEmail(
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> emailUpdate
+    ) {
         try {
-            customerService.updatePhoneNumber(id, phoneNumber);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            String newEmail = emailUpdate.get("customerEmail");
+            CustomerDto updatedCustomer = customerService.updateCustomerEmail(id, newEmail);
+            return ResponseEntity.ok(updatedCustomer);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<Void> updateCustomerPassword(@PathVariable UUID id, @RequestParam String password) {
+    public ResponseEntity<CustomerDto> updateCustomerPassword(
+            @PathVariable UUID id,
+            @RequestBody Map<String, String> passwordUpdate
+    ) {
         try {
-            customerService.updatePassword(id, password);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            String newPassword = passwordUpdate.get("password");
+            CustomerDto updatedCustomer = customerService.updateCustomerPassword(id, newPassword);
+            return ResponseEntity.ok(updatedCustomer);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {

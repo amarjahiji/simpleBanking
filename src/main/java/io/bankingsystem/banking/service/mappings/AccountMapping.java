@@ -20,7 +20,6 @@ public class AccountMapping {
         );
     }
 
-    // Maps AccountDto to AccountEntity
     public AccountEntity mapToAccountEntity(AccountDto dto) {
         AccountEntity entity = new AccountEntity();
         entity.setAccountNumber(dto.getAccountNumber());

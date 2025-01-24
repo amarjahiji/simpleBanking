@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,16 +51,6 @@ public class CardController {
             return ResponseEntity.ok(updatedCard);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
-    @PatchMapping("/{id}/expirydate")
-    public ResponseEntity<Void> updateAccountDateClosed(@PathVariable UUID id, @RequestParam LocalDate cardExpiryDate) {
-        try {
-            cardService.updateExpiryDate(id, cardExpiryDate);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
         }
     }
 

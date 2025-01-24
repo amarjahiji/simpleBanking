@@ -17,7 +17,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "customers")
 
-public class CustomerEntity {
+public class CustomerEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "BINARY(16)", nullable = false, updatable = false)

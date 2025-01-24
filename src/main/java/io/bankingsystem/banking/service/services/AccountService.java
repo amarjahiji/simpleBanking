@@ -190,33 +190,33 @@ public class AccountService {
     }
 
     @Transactional
-    public void updateBalance(UUID accountId, BigDecimal newBalance) {
-        AccountEntity account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException("Account not found with ID: " + accountId));
-        validationService.validateAccountNotClosed(account);
-        validationService.validateNewBalance(newBalance);
-        account.setAccountCurrentBalance(newBalance);
-        accountRepository.save(account);
+    public AccountDto updateAccountCurrentBalance(UUID id, BigDecimal newCurrentBalance) {
+        validationService.validateNewBalance(newCurrentBalance);
+        AccountEntity accountEntity = accountRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        accountEntity.setAccountCurrentBalance(newCurrentBalance);
+        AccountEntity savedEntity = accountRepository.save(accountEntity);
+        return mappingService.mapToAccountDto(savedEntity);
     }
 
     @Transactional
-    public void updateDateClosed(UUID accountId, LocalDateTime newDateClosed) {
-        AccountEntity account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException("Account not found with ID: " + accountId));
-        validationService.validateAccountNotClosed(account);
+    public AccountDto updateAccountDateClosed(UUID id, LocalDateTime newDateClosed) {
         validationService.validateDateClosed(newDateClosed);
-        account.setAccountDateClosed(newDateClosed);
-        accountRepository.save(account);
+        AccountEntity accountEntity = accountRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        accountEntity.setAccountDateClosed(newDateClosed);
+        AccountEntity savedEntity = accountRepository.save(accountEntity);
+        return mappingService.mapToAccountDto(savedEntity);
     }
 
     @Transactional
-    public void updateStatus(UUID accountId, String status) {
-        AccountEntity account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException("Account not found with ID: " + accountId));
-        validationService.validateAccountStatus(status);
-        AccountStatus accountStatus = AccountStatus.valueOf(status.toUpperCase());
-        account.setAccountStatus(accountStatus);
-        accountRepository.save(account);
+    public AccountDto updateAccountStatus(UUID id, String newStatus) {
+        validationService.validateAccountStatus(newStatus);
+        AccountEntity accountEntity = accountRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        accountEntity.setAccountStatus(AccountStatus.valueOf(newStatus));
+        AccountEntity savedEntity = accountRepository.save(accountEntity);
+        return mappingService.mapToAccountDto(savedEntity);
     }
 
     public void deleteAccount(UUID id) {

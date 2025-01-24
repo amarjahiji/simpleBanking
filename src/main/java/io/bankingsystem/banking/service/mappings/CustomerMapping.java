@@ -14,28 +14,30 @@ public class CustomerMapping {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Map CustomerDto to CustomerEntity, encoding the password
     public CustomerEntity mapToCustomerEntity(CustomerDto customerDto) {
         CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setCustomerFirstName(customerDto.getCustomerFirstName());
         customerEntity.setCustomerLastName(customerDto.getCustomerLastName());
-        customerEntity.setCustomerDateOfBirth(customerDto.getCustomerDateOfBirth()); // Added
+        customerEntity.setCustomerDateOfBirth(customerDto.getCustomerDateOfBirth());
         customerEntity.setCustomerEmail(customerDto.getCustomerEmail());
         customerEntity.setCustomerPhoneNumber(customerDto.getCustomerPhoneNumber());
         customerEntity.setCustomerAddress(customerDto.getCustomerAddress());
+        customerEntity.setCustomerRole(customerDto.getCustomerRole());
         customerEntity.setCustomerPassword(passwordEncoder.encode(customerDto.getCustomerPassword()));
         return customerEntity;
     }
 
-    // Map CustomerEntity to CustomerDto
     public CustomerDto mapToCustomerDto(CustomerEntity customerEntity) {
         CustomerDto customerDto = new CustomerDto();
         customerDto.setId(customerEntity.getId());
         customerDto.setCustomerFirstName(customerEntity.getCustomerFirstName());
         customerDto.setCustomerLastName(customerEntity.getCustomerLastName());
+        customerDto.setCustomerDateOfBirth(customerEntity.getCustomerDateOfBirth());
         customerDto.setCustomerEmail(customerEntity.getCustomerEmail());
         customerDto.setCustomerPhoneNumber(customerEntity.getCustomerPhoneNumber());
         customerDto.setCustomerAddress(customerEntity.getCustomerAddress());
+        customerDto.setCustomerPassword(customerEntity.getCustomerPassword());
+        customerDto.setCustomerRole(customerEntity.getCustomerRole());
         return customerDto;
     }
 }
