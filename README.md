@@ -19,7 +19,7 @@ A **Spring Boot** backend application providing REST APIs for a comprehensive ba
 
 - **Java**: 17
 - **Spring Boot**: 3.4.1
-- **Spring Security**: Role-based access control.
+- **Spring Security**: Access control.
 - **Spring Data JPA**: For database interactions.
 - **Hibernate**: ORM for persistence.
 - **MySQL**: Relational database.
@@ -44,26 +44,34 @@ The application uses five main entities:
 ## 📡 API Endpoints
 
 ### **Customer Endpoints:**
-- **GET** `/api/customers` - Retrieve all customers.
-- **GET** `/api/customers/{id}` - Retrieve a specific customer by ID.
-- **GET** `/api/customers/accounts` - Retrieve customers and their accounts.
-- **GET** `/api/customers/{id}/accounts` - Retrieve a specific customer by ID and their associated accounts.
-- **POST** `/api/customers` - Create a new customer.
-- **PUT** `/api/customers/{id}` - Update customer details.
-- **PATCH** `/api/customers/address{id}` - Update customer address.
-- **PATCH** `/api/customers/email/{id}` - Update customer email.
-- **PATCH** `/api/customers/password/{id}` - Update customer password.
-- **DELETE** `/api/customers/{id}` - Delete a customer.
+- **GET** `/customers` - Retrieve all customers.
+- **GET** `/customers/young` - Retrieve all customers younger than 25.
+- **GET** `/customers/old` - Retrieve all customers older than 64.
+- **GET** `/customers/{id}` - Retrieve a specific customer by ID.
+- **GET** `/customers/accounts` - Retrieve all customers and their accounts.
+- **GET** `/customers/accounts/{id}` - Retrieve a specific customer by ID and their associated accounts.
+- **GET** `/customers/accounts/cards` - Retrieve all customers and their accounts and cards associated to their accounts.
+- **GET** `/customers/accounts/cards/{id}` - Retrieve a specific customer by ID and their associated accounts and cards associated to their accounts.
+- **POST** `/customers` - Create a new customer.
+- **PUT** `/customers/{id}` - Update customer details.
+- **PATCH** `/customers/address{id}` - Update customer address.
+- **PATCH** `/customers/email/{id}` - Update customer email.
+- **PATCH** `/customers/password/{id}` - Update customer password.
+- **DELETE** `/customers/{id}` - Delete a customer.
 
 ### **Account Endpoints:**
-- **GET** `/api/accounts` - Retrieve all accounts.
-- **GET** `/api/accounts/{id}` - Retrieve a specific account by ID.
-- **POST** `/api/accounts` - Create a new account.
-- **PUT** `/api/accounts/{id}` - Update account details.
-- **PATCH** `/api/accounts/balance/{id}` - Update account current balance.
-- **PATCH** `/api/accounts/status/{id}` - Update account status.
-- **PATCH** `/api/accounts/date-closed/{id}` - Update account date closed.
-- **DELETE** `/api/accounts/{id}` - Delete an account.
+- **GET** `/accounts` - Retrieve all accounts.
+- **GET** `/accounts/{id}` - Retrieve a specific account by ID.
+- **GET** `/accounts/cards` - Retrieve all accounts and their cards.
+- **GET** `/accounts/cards/{id}` - Retrieve a specific account by ID and their associated cards.
+- **GET** `/accounts/transactions` - Retrieve all accounts and their transactions.
+- **GET** `/accounts/transactions/{id}` - Retrieve a specific account by ID and their associated transactions.
+- **POST** `/accounts` - Create a new account.
+- **PUT** `/accounts/{id}` - Update account details.
+- **PATCH** `/accounts/balance/{id}` - Update account current balance.
+- **PATCH** `/accounts/status/{id}` - Update account status.
+- **PATCH** `/accounts/date-closed/{id}` - Update account date closed.
+- **DELETE** `/accounts/{id}` - Delete an account.
 
 > Similar endpoints exist for **Card**, **CardType**, and **Transaction** entities.
 
@@ -72,7 +80,6 @@ The application uses five main entities:
 ## 🔒 Security
 
 - **Basic Authentication**: Secure Authentication.
-- **Role-Based Access Control**: Granular permissions.
 - **Secure Password Handling**: Passwords hashed with **Bcrypt**.
 - **Protected Endpoints**: Ensures only authorized access.
 
