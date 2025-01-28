@@ -103,11 +103,9 @@ class CardEntityTest {
     @Test
     @DisplayName("Expiry date edge cases")
     void testExpiryEdgeCases() {
-        // Test minimum valid date
         card.setCardExpiryDate(LocalDate.MIN);
         assertEquals(LocalDate.MIN, card.getCardExpiryDate());
 
-        // Test leap day
         LocalDate leapDate = LocalDate.of(2024, 2, 29);
         card.setCardExpiryDate(leapDate);
         assertEquals(29, card.getCardExpiryDate().getDayOfMonth());

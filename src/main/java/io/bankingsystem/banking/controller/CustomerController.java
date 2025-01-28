@@ -53,7 +53,7 @@ public class CustomerController {
         try {
             List<CustomerAccountsDto> customers = customerService.getCustomersWithAccounts();
             return ResponseEntity.ok(customers);
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
@@ -68,14 +68,28 @@ public class CustomerController {
         }
     }
 
-    //This works as well account as a list simply needs to be added on dto, It is not a technical issue
-//    @GetMapping("/details/{id}")
-//    public ResponseEntity<CustomerDto> getCustomerWithAccountsAndCards(@PathVariable UUID id) {
-//        CustomerDto customerDto = customerService.getCustomerWithAccountsAndCards(id);
-//        return ResponseEntity.ok(customerDto);
-//    }
+    @GetMapping("/accounts/cards")
+    public ResponseEntity<List<CustomerAccountsDto>> getCustomersAccountsCards() {
+        try{
+            List<CustomerAccountsDto> customers = customerService.getCustomersAccountsCards();
+        return ResponseEntity.ok(customers);
+    }catch (Exception e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);}
+    }
 
-    @PostMapping
+
+    @GetMapping("/accounts-cards/{id}")
+    public ResponseEntity<CustomerAccountsDto> getCustomerAccountsCardsById(@PathVariable UUID id) {
+        try {
+            CustomerAccountsDto customer = customerService.getCustomerAccountsCardsById(id);
+            return ResponseEntity.ok(customer);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+
+    @PostMapping("/create")
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) {
         try {
             CustomerDto createdCustomer = customerService.createCustomer(customerDto);
@@ -85,7 +99,7 @@ public class CustomerController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<CustomerDto> updateCustomer(@PathVariable UUID id, @RequestBody CustomerDto customerDto) {
         try {
             CustomerDto updatedCustomer = customerService.updateCustomerById(id, customerDto);

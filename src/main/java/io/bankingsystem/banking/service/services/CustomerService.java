@@ -21,29 +21,29 @@ import java.util.stream.Collectors;
 public class CustomerService {
 private final CustomerRepository customerRepository;
 private final AccountRepository accountRepository;
-private final CustomerMapping mappingService;
+private final CustomerMapping customerMapping;
 private final CustomerValidation validationService;
 private final PasswordEncoder passwordEncoder;
 private final CardRepository cardRepository;
 
-    public CustomerService(CustomerRepository customerRepository, AccountRepository accountRepository, CustomerMapping mappingService, CustomerValidation validationService, PasswordEncoder passwordEncoder, CardRepository cardRepository) {
+    public CustomerService(CustomerRepository customerRepository, AccountRepository accountRepository, CustomerMapping customerMapping, CustomerValidation validationService, PasswordEncoder passwordEncoder, CardRepository cardRepository) {
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
-        this.mappingService = mappingService;
+        this.customerMapping = customerMapping;
         this.validationService = validationService;
         this.passwordEncoder = passwordEncoder;
         this.cardRepository = cardRepository;
     }
     
     public List<CustomerDto> getAllCustomers() {
-        return customerRepository.findAll().stream().map(mappingService::mapToCustomerDto).collect(Collectors.toList());
+        return customerRepository.findAll().stream().map(customerMapping::mapToCustomerDto).collect(Collectors.toList());
     }
 
     public List<CustomerDto> getCustomersYoungerThan24() {
         LocalDate twentyFourYearsAgo = LocalDate.now().minusYears(24);
         List<CustomerEntity> customers = customerRepository.findByCustomerDateOfBirthAfter(twentyFourYearsAgo);
         return customers.stream()
-                .map(mappingService::mapToCustomerDto)
+                .map(customerMapping::mapToCustomerDto)
                 .collect(Collectors.toList());
     }
 
@@ -51,14 +51,14 @@ private final CardRepository cardRepository;
         LocalDate sixtyFourYearsAgo = LocalDate.now().minusYears(64);
         List<CustomerEntity> customers = customerRepository.findByCustomerDateOfBirthBefore(sixtyFourYearsAgo);
         return customers.stream()
-                .map(mappingService::mapToCustomerDto)
+                .map(customerMapping::mapToCustomerDto)
                 .collect(Collectors.toList());
     }
 
     public CustomerDto getCustomerById(UUID id) {
         CustomerEntity customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
-        return mappingService.mapToCustomerDto(customer);
+        return customerMapping.mapToCustomerDto(customer);
     }
 
     public List<CustomerAccountsDto> getCustomersWithAccounts() {
@@ -120,31 +120,24 @@ private final CardRepository cardRepository;
                 accounts
         );
     }
-    //This works as well account as a list simply needs to be added on dto, It is not a technical issue
+    public List<CustomerAccountsDto> getCustomersAccountsCards() {
+        List<CustomerEntity> customers = customerRepository.findAll();
+        return customers.stream()
+                .map(customer -> customerMapping.mapToCustomerAccountsDto(customer, accountRepository, cardRepository))
+                .toList();
+    }
 
-//    public CustomerDto getCustomerWithAccountsAndCards(UUID customerId) {
-//        CustomerEntity customerEntity = customerRepository.findById(customerId)
-//                .orElseThrow(() -> new RuntimeException("Customer not found"));
-//        CustomerDto customerDto = mapToCustomerDto(customerEntity);
-//        List<AccountEntity> accounts = accountRepository.findByCustomerId(customerId);
-//        List<AccountCardsDto> accountDtos = accounts.stream().map(account -> {
-//            AccountCardsDto accountDto = mapToAccountDto(account);
-//            List<CardEntity> cards = cardRepository.findByAccountId(account.getId());
-//            List<CardDto> cardDtos = cards.stream()
-//                    .map(this::mapToCardDto)
-//                    .toList();
-//            accountDto.setCards(cardDtos);
-//            return accountDto;
-//        }).toList();
-//        customerDto.setAccounts(accountDtos);
-//        return customerDto;
-//    }
+    public CustomerAccountsDto getCustomerAccountsCardsById(UUID customerId) {
+        CustomerEntity customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+        return customerMapping.mapToCustomerAccountsDto(customer, accountRepository, cardRepository);
+    }
 
     public CustomerDto createCustomer(CustomerDto customerDto) {
         validationService.validateCustomerDto(customerDto);
-        CustomerEntity customer = mappingService.mapToCustomerEntity(customerDto);
+        CustomerEntity customer = customerMapping.mapToCustomerEntity(customerDto);
         CustomerEntity savedCustomer = customerRepository.save(customer);
-        return mappingService.mapToCustomerDto(savedCustomer);
+        return customerMapping.mapToCustomerDto(savedCustomer);
     }
 
     public CustomerDto updateCustomerById(UUID id, CustomerDto customerDto) {
@@ -161,7 +154,7 @@ private final CardRepository cardRepository;
             customer.setCustomerPassword(passwordEncoder.encode(customerDto.getCustomerPassword()));
         }
         CustomerEntity updatedCustomer = customerRepository.save(customer);
-        return mappingService.mapToCustomerDto(updatedCustomer);
+        return customerMapping.mapToCustomerDto(updatedCustomer);
     }
 
     @Transactional
@@ -171,7 +164,7 @@ private final CardRepository cardRepository;
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
         customerEntity.setCustomerAddress(newAddress);
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
-        return mappingService.mapToCustomerDto(savedEntity);
+        return customerMapping.mapToCustomerDto(savedEntity);
     }
 
     @Transactional
@@ -181,7 +174,7 @@ private final CardRepository cardRepository;
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
         customerEntity.setCustomerPhoneNumber(newPhoneNumber);
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
-        return  mappingService.mapToCustomerDto(savedEntity);
+        return  customerMapping.mapToCustomerDto(savedEntity);
     }
 
     @Transactional
@@ -191,7 +184,7 @@ private final CardRepository cardRepository;
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
         customerEntity.setCustomerEmail(newEmail);
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
-        return  mappingService.mapToCustomerDto(savedEntity);
+        return  customerMapping.mapToCustomerDto(savedEntity);
     }
 
     @Transactional
@@ -202,7 +195,7 @@ private final CardRepository cardRepository;
         customerEntity.setCustomerPassword(passwordEncoder.encode(newPassword));
         CustomerEntity savedEntity = customerRepository.save(customerEntity);
         return
-               mappingService.mapToCustomerDto(savedEntity);
+               customerMapping.mapToCustomerDto(savedEntity);
     }
 
     public void deleteCustomer(UUID id) {

@@ -17,15 +17,18 @@ A **Spring Boot** backend application providing REST APIs for a comprehensive ba
 
 ## 🛠️ Technologies
 
-- **Java**: 17
-- **Spring Boot**: 3.4.1
-- **Spring Security**: Access control.
-- **Spring Data JPA**: For database interactions.
-- **Hibernate**: ORM for persistence.
-- **MySQL**: Relational database.
-- **Bcrypt**: Secure password handling.
-- **HikariCP**: High-performance connection pooling.
-- **Maven**: Build and dependency management.
+- **Java**  17
+- **Spring Boot**  3.4.1
+- **J-Unit**  5
+- **MySQL**  5
+
+
+- **Spring Security** - For access control.
+- **Spring Data JPA** - For database interactions.
+- **Hibernate**       - For ORM persistence.
+- **Bcrypt**          - For secure password handling.
+- **HikariCP**        - For connection pooling.
+- **Maven**           - For building and dependency management.
 
 ---
 
@@ -52,12 +55,12 @@ The application uses five main entities:
 - **GET** `/customers/accounts/{id}` - Retrieve a specific customer by ID and their associated accounts.
 - **GET** `/customers/accounts/cards` - Retrieve all customers and their accounts and cards associated to their accounts.
 - **GET** `/customers/accounts/cards/{id}` - Retrieve a specific customer by ID and their associated accounts and cards associated to their accounts.
-- **POST** `/customers` - Create a new customer.
+- **POST** `/customers/create` - Create a new customer.
 - **PUT** `/customers/{id}` - Update customer details.
-- **PATCH** `/customers/address{id}` - Update customer address.
-- **PATCH** `/customers/email/{id}` - Update customer email.
-- **PATCH** `/customers/password/{id}` - Update customer password.
-- **DELETE** `/customers/{id}` - Delete a customer.
+- **PATCH** `/customers/update/address{id}` - Update customer address.
+- **PATCH** `/customers/update/email/{id}` - Update customer email.
+- **PATCH** `/customers/update/password/{id}` - Update customer password.
+- **DELETE** `/customers/delete/{id}` - Delete a customer.
 
 ### **Account Endpoints:**
 - **GET** `/accounts` - Retrieve all accounts.
