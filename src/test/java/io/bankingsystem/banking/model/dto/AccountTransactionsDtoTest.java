@@ -1,16 +1,20 @@
-package io.bankingsystem.banking.model.entity;
+package io.bankingsystem.banking.model.dto;
 
-import io.bankingsystem.banking.model.dto.AccountCardsDto;
 import io.bankingsystem.banking.model.enum_fields.AccountStatus;
 import io.bankingsystem.banking.model.enum_fields.AccountType;
+import io.bankingsystem.banking.model.enum_fields.TransactionType;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-class AccountEntityTest {
+
+class AccountTransactionsDtoTest {
     @Test
     void getId() {
         AccountCardsDto dto = new AccountCardsDto();
@@ -69,5 +73,23 @@ class AccountEntityTest {
         dto.setCustomerId(UUID.randomUUID());
         String customerId = UUID.randomUUID().toString();
         assertEquals(36, customerId.length());
+    }
+
+    @Test
+    void getTransactions() {
+        TransactionDto transaction1 = new TransactionDto();
+        transaction1.setId(UUID.randomUUID());
+        transaction1.setTransactionType(TransactionType.TRANSFER);
+        transaction1.setTransactionAmount(new BigDecimal("100.00"));
+        transaction1.setTransactionDate(LocalDateTime.now());
+        transaction1.setTransactionDescription("This is a transaction");
+        transaction1.setTransactionDestination(UUID.randomUUID().toString());
+        transaction1.setAccountId(UUID.randomUUID());
+
+        List<TransactionDto> transactionDtos = Arrays.asList(transaction1);
+        AccountTransactionsDto dto = new AccountTransactionsDto();
+        dto.setTransactions(transactionDtos);
+
+        assertEquals(transactionDtos, dto.getTransactions());
     }
 }

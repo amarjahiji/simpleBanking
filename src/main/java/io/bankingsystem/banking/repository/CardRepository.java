@@ -10,4 +10,5 @@ import java.util.UUID;
 
 public interface CardRepository extends JpaRepository<CardEntity, UUID> {
     List<CardEntity> findByAccountId(UUID accountId);
+    void deleteByAccountId(UUID accountId);
 }

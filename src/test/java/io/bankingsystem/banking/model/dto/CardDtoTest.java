@@ -1,13 +1,14 @@
-package io.bankingsystem.banking.model.entity;
+package io.bankingsystem.banking.model.dto;
 
-import io.bankingsystem.banking.model.dto.CardDto;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-class CardEntityTest {
+
+class CardDtoTest {
+
     @Test
     void getId() {
         CardDto card = new CardDto();
@@ -55,5 +56,4 @@ class CardEntityTest {
         card.setAccountId(accountId);
         assertEquals(accountId, card.getAccountId());
     }
-  
 }

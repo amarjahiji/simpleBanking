@@ -1,6 +1,5 @@
-package io.bankingsystem.banking.model.entity;
+package io.bankingsystem.banking.model.dto;
 
-import io.bankingsystem.banking.model.dto.AccountCardsDto;
 import io.bankingsystem.banking.model.enum_fields.AccountStatus;
 import io.bankingsystem.banking.model.enum_fields.AccountType;
 import org.junit.jupiter.api.Test;
@@ -9,8 +8,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-class AccountEntityTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class CustomerDtoTest {
+
     @Test
     void getId() {
         AccountCardsDto dto = new AccountCardsDto();

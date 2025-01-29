@@ -1,10 +1,9 @@
 package io.bankingsystem.banking.service.mappings;
 
-import io.bankingsystem.banking.model.dto.AccountCardsDto;
-import io.bankingsystem.banking.model.dto.AccountDto;
-import io.bankingsystem.banking.model.dto.CardDto;
+import io.bankingsystem.banking.model.dto.*;
 import io.bankingsystem.banking.model.entity.AccountEntity;
 import io.bankingsystem.banking.repository.CardRepository;
+import io.bankingsystem.banking.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +12,11 @@ import java.util.List;
 public class AccountMapping {
 
     private final CardMapping cardMapping;
+    private final TransactionMapping transactionMapping;
 
-    public AccountMapping(CardMapping cardMapping) {
+    public AccountMapping(CardMapping cardMapping, TransactionMapping transactionMapping) {
         this.cardMapping = cardMapping;
+        this.transactionMapping = transactionMapping;
     }
 
     public AccountDto mapToAccountDto(AccountEntity account) {
@@ -63,6 +64,24 @@ public class AccountMapping {
                 .map(cardMapping::mapToCardDto)
                 .toList();
         dto.setCards(cardDtos);
+
+        return dto;
+    }
+
+    public AccountTransactionsDto mapToAccountTransactionsDto(AccountEntity account, TransactionRepository transactionRepository) {
+        AccountTransactionsDto dto = new AccountTransactionsDto();
+        dto.setId(account.getId());
+        dto.setAccountNumber(account.getAccountNumber());
+        dto.setAccountType(account.getAccountType());
+        dto.setAccountCurrentBalance(account.getAccountCurrentBalance());
+        dto.setAccountDateOpened(account.getAccountDateOpened());
+        dto.setAccountDateClosed(account.getAccountDateClosed());
+        dto.setAccountStatus(account.getAccountStatus());
+
+        List<TransactionDto> transactionDtos = transactionRepository.findByAccountId(account.getId()).stream()
+                .map(transactionMapping::mapToTransactionDto)
+                .toList();
+        dto.setTransactions(transactionDtos);
 
         return dto;
     }

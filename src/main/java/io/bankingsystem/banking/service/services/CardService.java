@@ -10,6 +10,7 @@ import io.bankingsystem.banking.repository.CardTypeRepository;
 import io.bankingsystem.banking.service.mappings.CardMapping;
 import io.bankingsystem.banking.service.validations.CardValidation;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,10 +67,11 @@ public class CardService {
         return mappingService.mapToCardDto(updatedCard);
     }
 
-    public void deleteCard(UUID id) {
-        cardRepository.findById(id).ifPresentOrElse(
-                cardRepository::delete, () -> {
-                    throw new EntityNotFoundException("Card not found with ID: " + id);
-                });
+    @Transactional
+    public void deleteCard(UUID cardId) {
+        CardEntity card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new EntityNotFoundException("Card not found"));
+
+        cardRepository.delete(card);
     }
 }

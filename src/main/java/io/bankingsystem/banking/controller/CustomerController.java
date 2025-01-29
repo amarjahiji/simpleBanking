@@ -1,5 +1,6 @@
 package io.bankingsystem.banking.controller;
 
+import io.bankingsystem.banking.model.dto.CustomerAccountsCardsDto;
 import io.bankingsystem.banking.model.dto.CustomerAccountsDto;
 import io.bankingsystem.banking.model.dto.CustomerDto;
 import io.bankingsystem.banking.service.services.CustomerService;
@@ -69,9 +70,9 @@ public class CustomerController {
     }
 
     @GetMapping("/accounts/cards")
-    public ResponseEntity<List<CustomerAccountsDto>> getCustomersAccountsCards() {
+    public ResponseEntity<List<CustomerAccountsCardsDto>> getCustomersAccountsCards() {
         try{
-            List<CustomerAccountsDto> customers = customerService.getCustomersAccountsCards();
+            List<CustomerAccountsCardsDto> customers = customerService.getCustomersAccountsCards();
         return ResponseEntity.ok(customers);
     }catch (Exception e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);}
@@ -79,9 +80,9 @@ public class CustomerController {
 
 
     @GetMapping("/accounts-cards/{id}")
-    public ResponseEntity<CustomerAccountsDto> getCustomerAccountsCardsById(@PathVariable UUID id) {
+    public ResponseEntity<CustomerAccountsCardsDto> getCustomerAccountsCardsById(@PathVariable UUID id) {
         try {
-            CustomerAccountsDto customer = customerService.getCustomerAccountsCardsById(id);
+            CustomerAccountsCardsDto customer = customerService.getCustomerAccountsCardsById(id);
             return ResponseEntity.ok(customer);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -152,7 +153,7 @@ public class CustomerController {
         }
     }
 
-    @PatchMapping("/{id}/password")
+    @PatchMapping("/password/{id}")
     public ResponseEntity<CustomerDto> updateCustomerPassword(
             @PathVariable UUID id,
             @RequestBody Map<String, String> passwordUpdate
@@ -165,7 +166,6 @@ public class CustomerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {

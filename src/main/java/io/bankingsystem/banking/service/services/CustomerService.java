@@ -1,10 +1,12 @@
 package io.bankingsystem.banking.service.services;
 
 import io.bankingsystem.banking.model.dto.*;
+import io.bankingsystem.banking.model.entity.AccountEntity;
 import io.bankingsystem.banking.model.entity.CustomerEntity;
 import io.bankingsystem.banking.repository.AccountRepository;
 import io.bankingsystem.banking.repository.CardRepository;
 import io.bankingsystem.banking.repository.CustomerRepository;
+import io.bankingsystem.banking.repository.TransactionRepository;
 import io.bankingsystem.banking.service.mappings.CustomerMapping;
 import io.bankingsystem.banking.service.validations.CustomerValidation;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,14 +27,16 @@ private final CustomerMapping customerMapping;
 private final CustomerValidation validationService;
 private final PasswordEncoder passwordEncoder;
 private final CardRepository cardRepository;
+private final TransactionRepository transactionRepository;
 
-    public CustomerService(CustomerRepository customerRepository, AccountRepository accountRepository, CustomerMapping customerMapping, CustomerValidation validationService, PasswordEncoder passwordEncoder, CardRepository cardRepository) {
+    public CustomerService(CustomerRepository customerRepository, AccountRepository accountRepository, CustomerMapping customerMapping, CustomerValidation validationService, PasswordEncoder passwordEncoder, CardRepository cardRepository, TransactionRepository transactionRepository) {
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
         this.customerMapping = customerMapping;
         this.validationService = validationService;
         this.passwordEncoder = passwordEncoder;
         this.cardRepository = cardRepository;
+        this.transactionRepository = transactionRepository;
     }
     
     public List<CustomerDto> getAllCustomers() {
@@ -63,74 +67,28 @@ private final CardRepository cardRepository;
 
     public List<CustomerAccountsDto> getCustomersWithAccounts() {
         List<CustomerEntity> customers = customerRepository.findAll();
-        return customers.stream().map(customer -> {
-            List<AccountDto> accounts = accountRepository.findByCustomerId(customer.getId())
-                    .stream()
-                    .map(account -> new AccountDto(
-                            account.getId(),
-                            account.getAccountNumber(),
-                            account.getAccountType(),
-                            account.getAccountCurrentBalance(),
-                            account.getAccountDateOpened(),
-                            account.getAccountDateClosed(),
-                            account.getAccountStatus(),
-                            account.getCustomer().getId()
-                    ))
-                    .collect(Collectors.toList());
-
-            return new CustomerAccountsDto(
-                    customer.getId(),
-                    customer.getCustomerFirstName(),
-                    customer.getCustomerLastName(),
-                    customer.getCustomerEmail(),
-                    customer.getCustomerPhoneNumber(),
-                    customer.getCustomerAddress(),
-                    customer.getCustomerRole(),
-                    accounts
-            );
-        }).collect(Collectors.toList());
+        return customers.stream()
+                .map(customer -> customerMapping.mapToCustomerAccountsDto(customer, accountRepository))
+                .collect(Collectors.toList());
     }
 
     public CustomerAccountsDto getCustomerWithAccountsById(UUID customerId) {
         CustomerEntity customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
-
-        List<AccountDto> accounts = accountRepository.findByCustomerId(customerId)
-                .stream()
-                .map(account -> new AccountDto(
-                        account.getId(),
-                        account.getAccountNumber(),
-                        account.getAccountType(),
-                        account.getAccountCurrentBalance(),
-                        account.getAccountDateOpened(),
-                        account.getAccountDateClosed(),
-                        account.getAccountStatus(),
-                        account.getCustomer().getId()
-                ))
-                .collect(Collectors.toList());
-
-        return new CustomerAccountsDto(
-                customer.getId(),
-                customer.getCustomerFirstName(),
-                customer.getCustomerLastName(),
-                customer.getCustomerEmail(),
-                customer.getCustomerPhoneNumber(),
-                customer.getCustomerAddress(),
-                customer.getCustomerRole(),
-                accounts
-        );
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
+        return customerMapping.mapToCustomerAccountsDto(customer, accountRepository);
     }
-    public List<CustomerAccountsDto> getCustomersAccountsCards() {
+
+    public List<CustomerAccountsCardsDto> getCustomersAccountsCards() {
         List<CustomerEntity> customers = customerRepository.findAll();
         return customers.stream()
-                .map(customer -> customerMapping.mapToCustomerAccountsDto(customer, accountRepository, cardRepository))
+                .map(customer -> customerMapping.mapToCustomerAccountsCardsDto(customer, accountRepository, cardRepository))
                 .toList();
     }
 
-    public CustomerAccountsDto getCustomerAccountsCardsById(UUID customerId) {
+    public CustomerAccountsCardsDto getCustomerAccountsCardsById(UUID customerId) {
         CustomerEntity customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
-        return customerMapping.mapToCustomerAccountsDto(customer, accountRepository, cardRepository);
+        return customerMapping.mapToCustomerAccountsCardsDto(customer, accountRepository, cardRepository);
     }
 
     public CustomerDto createCustomer(CustomerDto customerDto) {
@@ -143,17 +101,12 @@ private final CardRepository cardRepository;
     public CustomerDto updateCustomerById(UUID id, CustomerDto customerDto) {
         CustomerEntity customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + id));
+
         validationService.validateCustomerDto(customerDto);
-        customer.setCustomerFirstName(customerDto.getCustomerFirstName());
-        customer.setCustomerLastName(customerDto.getCustomerLastName());
-        customer.setCustomerDateOfBirth(customerDto.getCustomerDateOfBirth());
-        customer.setCustomerEmail(customerDto.getCustomerEmail());
-        customer.setCustomerPhoneNumber(customerDto.getCustomerPhoneNumber());
-        customer.setCustomerAddress(customerDto.getCustomerAddress());
-        if (customerDto.getCustomerPassword() != null && !customerDto.getCustomerPassword().isEmpty()) {
-            customer.setCustomerPassword(passwordEncoder.encode(customerDto.getCustomerPassword()));
-        }
-        CustomerEntity updatedCustomer = customerRepository.save(customer);
+
+        CustomerEntity updatedCustomer = customerMapping.updateCustomerEntityFromDto(customer, customerDto);
+        updatedCustomer = customerRepository.save(updatedCustomer);
+
         return customerMapping.mapToCustomerDto(updatedCustomer);
     }
 
@@ -198,11 +151,19 @@ private final CardRepository cardRepository;
                customerMapping.mapToCustomerDto(savedEntity);
     }
 
+    @Transactional
     public void deleteCustomer(UUID id) {
-        customerRepository.findById(id).ifPresentOrElse(
-                customerRepository::delete, () -> {
-                    throw new EntityNotFoundException("Customer not found with ID: " + id);
-                });
+        CustomerEntity customer = customerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+
+        List<AccountEntity> accounts = accountRepository.findByCustomerId(id);
+
+        for(AccountEntity account : accounts) {
+            cardRepository.deleteByAccountId(account.getId());
+            transactionRepository.deleteByAccountId(account.getId());
+        }
+        accountRepository.deleteByCustomerId(id);
+        customerRepository.delete(customer);
     }
 }
 

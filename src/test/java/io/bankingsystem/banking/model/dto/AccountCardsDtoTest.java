@@ -1,16 +1,20 @@
-package io.bankingsystem.banking.model.entity;
+package io.bankingsystem.banking.model.dto;
 
-import io.bankingsystem.banking.model.dto.AccountCardsDto;
 import io.bankingsystem.banking.model.enum_fields.AccountStatus;
 import io.bankingsystem.banking.model.enum_fields.AccountType;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-class AccountEntityTest {
+
+class AccountCardsDtoTest {
+
     @Test
     void getId() {
         AccountCardsDto dto = new AccountCardsDto();
@@ -69,5 +73,22 @@ class AccountEntityTest {
         dto.setCustomerId(UUID.randomUUID());
         String customerId = UUID.randomUUID().toString();
         assertEquals(36, customerId.length());
+    }
+
+    @Test
+    void getCards() {
+        CardDto card1 = new CardDto();
+        card1.setId(UUID.randomUUID());
+        card1.setCardNumber("1234 5678 9012 3456");
+        card1.setCardExpiryDate(LocalDate.of(2025, 12, 31));
+        card1.setCardCvv("123");
+        card1.setCardTypeId(1);
+        card1.setAccountId(UUID.randomUUID());
+
+        List<CardDto> cards = Arrays.asList(card1);
+        AccountCardsDto dto = new AccountCardsDto();
+        dto.setCards(cards);
+
+        assertEquals(cards, dto.getCards());
     }
 }

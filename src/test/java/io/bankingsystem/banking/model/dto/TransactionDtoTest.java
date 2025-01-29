@@ -1,6 +1,5 @@
-package io.bankingsystem.banking.model.entity;
+package io.bankingsystem.banking.model.dto;
 
-import io.bankingsystem.banking.model.dto.TransactionDto;
 import io.bankingsystem.banking.model.enum_fields.TransactionType;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +9,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TransactionEntityTest {
+class TransactionDtoTest {
+
     @Test
     void getId() {
         TransactionDto transaction = new TransactionDto();

@@ -1,7 +1,6 @@
 package io.bankingsystem.banking.service.validations;
 
 import io.bankingsystem.banking.model.dto.AccountDto;
-import io.bankingsystem.banking.model.entity.AccountEntity;
 import io.bankingsystem.banking.model.enum_fields.AccountStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +22,6 @@ public class AccountValidation {
         }
     }
 
-    public void validateAccountNotClosed(AccountEntity account) {
-        if (AccountStatus.CLOSED.equals(account.getAccountStatus())){
-            throw new IllegalStateException("Cannot update the account as it is closed");
-        }
-    }
 
     public void validateAccountStatus(String status) {
         try {

@@ -1,12 +1,11 @@
-package io.bankingsystem.banking.model.entity;
+package io.bankingsystem.banking.model.dto;
 
-import io.bankingsystem.banking.model.dto.CardTypeDto;
 import io.bankingsystem.banking.model.enum_fields.CardTypeName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CardTypeEntityTest {
+class CardTypeDtoTest {
     @Test
     void getId() {
         CardTypeDto cardType = new CardTypeDto();
@@ -20,5 +19,4 @@ class CardTypeEntityTest {
         cardType.setCardTypeName(CardTypeName.CREDIT_CARD);
         assertEquals("CREDIT_CARD", cardType.getCardTypeName().toString());
     }
-
 }

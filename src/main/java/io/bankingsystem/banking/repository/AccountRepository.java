@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface AccountRepository extends JpaRepository<AccountEntity, UUID> {
     List<AccountEntity> findByCustomerId(UUID customerId);
+    void deleteByCustomerId(UUID customerId);
+
 }

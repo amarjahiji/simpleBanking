@@ -2,6 +2,7 @@ package io.bankingsystem.banking.controller;
 
 import io.bankingsystem.banking.model.dto.TransactionDto;
 import io.bankingsystem.banking.service.services.TransactionService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,13 +36,17 @@ public class TransactionController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto transactionDto) {
+    @PostMapping("/create")
+    public ResponseEntity<?> createTransaction(@RequestBody TransactionDto transactionDto) {
         try {
             TransactionDto createdTransaction = transactionService.createTransaction(transactionDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
