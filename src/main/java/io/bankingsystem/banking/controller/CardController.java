@@ -20,8 +20,11 @@ public class CardController {
 
     @GetMapping
     public ResponseEntity<List<CardDto>> getAllCards() {
+        try{
         List<CardDto> cards = cardService.getAllCards();
         return ResponseEntity.ok(cards);
+    }catch (Exception e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
     }
 
     @GetMapping("/{id}")
@@ -30,7 +33,7 @@ public class CardController {
             CardDto card = cardService.getCardById(id);
             return ResponseEntity.ok(card);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -50,7 +53,7 @@ public class CardController {
             CardDto updatedCard = cardService.updateCardById(id, cardDto);
             return ResponseEntity.ok(updatedCard);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

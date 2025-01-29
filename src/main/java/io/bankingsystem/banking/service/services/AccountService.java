@@ -99,9 +99,9 @@ public class AccountService {
 
     @Transactional
     public AccountDto updateAccountCurrentBalance(UUID id, BigDecimal newCurrentBalance) {
-        validationService.validateNewBalance(newCurrentBalance);
         AccountEntity accountEntity = accountRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+        validationService.validateNewBalance(newCurrentBalance);
         accountEntity.setAccountCurrentBalance(newCurrentBalance);
         AccountEntity savedEntity = accountRepository.save(accountEntity);
         return accountMapping.mapToAccountDto(savedEntity);

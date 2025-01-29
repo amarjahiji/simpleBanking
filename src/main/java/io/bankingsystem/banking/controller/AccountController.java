@@ -25,8 +25,11 @@ public class AccountController {
 
     @GetMapping
     public ResponseEntity<List<AccountDto>> getAllAccounts() {
+        try{
         List<AccountDto> accounts = accountService.getAllAccounts();
         return ResponseEntity.ok(accounts);
+    }catch (Exception e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
     }
 
     @GetMapping("/{id}")
@@ -35,13 +38,18 @@ public class AccountController {
             AccountDto account = accountService.getAccountById(id);
             return ResponseEntity.ok(account);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @GetMapping("/cards")
-    public List<AccountCardsDto> getAccountWithCards() {
-        return accountService.getAccountsWithCards();
+    public ResponseEntity<List<AccountCardsDto>> getAccountWithCards() {
+        try {
+            List<AccountCardsDto> accountCardsDto = accountService.getAccountsWithCards();
+            return ResponseEntity.ok(accountCardsDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @GetMapping("/cards/{id}")
@@ -50,13 +58,17 @@ public class AccountController {
             AccountCardsDto accountCards = accountService.getAccountWithCardsById(id);
             return ResponseEntity.ok(accountCards);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @GetMapping("/transactions")
-    public List<AccountTransactionsDto> getAccountWithTransactions() {
-        return accountService.getAccountsWithTransactions();
+    public ResponseEntity<List<AccountTransactionsDto>> getAccountWithTransactions() {
+        try{
+        List<AccountTransactionsDto> accountTransactionsDtos = accountService.getAccountsWithTransactions();
+        return ResponseEntity.ok(accountTransactionsDtos);
+    }catch (Exception e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
     }
 
     @GetMapping("/transaction/{id}")
@@ -65,7 +77,7 @@ public class AccountController {
             AccountTransactionsDto accountTransactions = accountService.getAccountWithTransactionsById(id);
             return ResponseEntity.ok(accountTransactions);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -75,7 +87,7 @@ public class AccountController {
             AccountDto createdAccount = accountService.createAccount(accountDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdAccount);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -85,7 +97,7 @@ public class AccountController {
             AccountDto updatedAccount = accountService.updateAccountById(id, accountDto);
             return ResponseEntity.ok(updatedAccount);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -99,7 +111,7 @@ public class AccountController {
             AccountDto updatedAccount = accountService.updateAccountCurrentBalance(id, newCurrentBalance);
             return ResponseEntity.ok(updatedAccount);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -113,7 +125,7 @@ public class AccountController {
             AccountDto updatedAccount = accountService.updateAccountDateClosed(id, newDateClosed);
             return ResponseEntity.ok(updatedAccount);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -127,7 +139,7 @@ public class AccountController {
             AccountDto updatedAccount = accountService.updateAccountStatus(id, newStatus);
             return ResponseEntity.ok(updatedAccount);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

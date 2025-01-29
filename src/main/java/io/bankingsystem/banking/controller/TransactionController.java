@@ -32,7 +32,7 @@ public class TransactionController {
             TransactionDto transaction = transactionService.getTransactionById(id);
             return ResponseEntity.ok(transaction);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

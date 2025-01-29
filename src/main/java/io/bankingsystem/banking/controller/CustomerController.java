@@ -45,7 +45,7 @@ public class CustomerController {
             CustomerDto customer = customerService.getCustomerById(id);
             return ResponseEntity.ok(customer);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -55,7 +55,7 @@ public class CustomerController {
             List<CustomerAccountsDto> customers = customerService.getCustomersWithAccounts();
             return ResponseEntity.ok(customers);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -65,7 +65,7 @@ public class CustomerController {
             CustomerAccountsDto customerAccounts = customerService.getCustomerWithAccountsById(id);
             return ResponseEntity.ok(customerAccounts);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -75,7 +75,7 @@ public class CustomerController {
             List<CustomerAccountsCardsDto> customers = customerService.getCustomersAccountsCards();
         return ResponseEntity.ok(customers);
     }catch (Exception e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);}
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
     }
 
 
@@ -85,7 +85,7 @@ public class CustomerController {
             CustomerAccountsCardsDto customer = customerService.getCustomerAccountsCardsById(id);
             return ResponseEntity.ok(customer);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -96,7 +96,7 @@ public class CustomerController {
             CustomerDto createdCustomer = customerService.createCustomer(customerDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdCustomer);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -106,7 +106,7 @@ public class CustomerController {
             CustomerDto updatedCustomer = customerService.updateCustomerById(id, customerDto);
             return ResponseEntity.ok(updatedCustomer);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -120,7 +120,7 @@ public class CustomerController {
             CustomerDto updatedCustomer = customerService.updateCustomerAddress(id, newAddress);
             return ResponseEntity.ok(updatedCustomer);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -135,7 +135,7 @@ public class CustomerController {
             CustomerDto updatedCustomer = customerService.updateCustomerPhoneNumber(id, newPhoneNumber);
             return ResponseEntity.ok(updatedCustomer);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -149,7 +149,7 @@ public class CustomerController {
             CustomerDto updatedCustomer = customerService.updateCustomerEmail(id, newEmail);
             return ResponseEntity.ok(updatedCustomer);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -163,7 +163,7 @@ public class CustomerController {
             CustomerDto updatedCustomer = customerService.updateCustomerPassword(id, newPassword);
             return ResponseEntity.ok(updatedCustomer);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
